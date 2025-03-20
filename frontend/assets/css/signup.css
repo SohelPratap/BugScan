@@ -1,3 +1,4 @@
+/* General styles */
 body {
     font-family: 'Poppins', sans-serif;
     background: url('../images/login_bg.jpg') no-repeat center center/cover;
@@ -21,30 +22,31 @@ body {
     z-index: 0;
 }
 
-/* Container without Background Image */
+/* Solid Container */
 .container {
-    background: rgba(255, 255, 255, 0.9); /* Light background for contrast */
+    background: rgba(255, 255, 255, 0.9); /* Solid white background */
     padding: 40px;
     border-radius: 10px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
     text-align: center;
     width: 350px;
     position: relative;
+    z-index: 1; /* Keep container above the blurred background */
 }
 
 /* Headings */
 h2 {
-    /* font-family: 'Poppins', sans-serif; */
+    font-family: 'Poppins', sans-serif;
     font-size: 35px;
     margin-bottom: 40px;
-    color: #222222; /* Dark text for visibility */
+    color: #222222;
 }
 
 /* Input Group */
 .input-group {
     display: flex;
     align-items: center;
-    background: rgba(255, 255, 255, 0.8);
+    background: rgba(255, 255, 255, 0.8); /* Solid light gray */
     padding: 10px;
     border-radius: 5px;
     margin-bottom: 15px;
@@ -66,7 +68,7 @@ h2 {
     color: #555;
 }
 
-/* Login Button */
+/* Sign Up Button */
 button {
     width: 100%;
     background: #1872e8;
@@ -82,7 +84,7 @@ button:hover {
     background: #444;
 }
 
-/* Sign-up link */
+/* Sign-in link */
 p {
     margin-top: 10px;
 }
