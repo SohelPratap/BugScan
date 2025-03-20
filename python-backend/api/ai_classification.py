@@ -20,28 +20,27 @@ def classify_scan_results(scan_results):
     prompt = f"""
 Analyze the following web scan results and identify all possible vulnerabilities. For each vulnerability, provide:
 1. Severity (P0 to P4, where P0 is critical and P4 is informational).
-2. Type of vulnerability. If a CVE is found, include its ID and a few words about it in the 'type' section (e.g., "CVE-2021-1234: SQL Injection in login module").
-3. Location (e.g., headers, parameters, URLs, etc.). Be specific about where the vulnerability is found (e.g., "in the 'Authorization' header" or "in the 'username' parameter").
+2. Type of vulnerability. If a CVE is found, include its ID and a few words about it in the 'type' section.
+3. Location (e.g., headers, parameters, URLs, etc.).
 4. Mitigation steps.
 
-Return the results in the following JSON format:
+Return only a valid JSON object like this:
 {{
   "results": [
     {{
       "severity": "P1",
-      "type": "SQL Injection (CVE-2021-1234: SQL Injection in login module)",
+      "type": "SQL Injection",
       "location": "in the 'username' parameter at http://example.com/login",
       "mitigation": "Use parameterized queries to prevent SQL injection."
     }},
     {{
       "severity": "P2",
-      "type": "XSS",
+      "type": "Cross-Site Scripting (CVE-2022-1234)",
       "location": "in the 'search' parameter at http://example.com/search",
-      "mitigation": "Sanitize user input to prevent XSS."
+      "mitigation": "Sanitize user input and use Content Security Policy (CSP) to mitigate XSS."
     }}
   ]
 }}
-
 Scan Results:
 {json.dumps(scan_results, indent=4)}
 """
@@ -53,28 +52,16 @@ Scan Results:
             stream=False
         )
 
-        # Debugging: Print raw response before parsing
-        print("RAW AI RESPONSE:", response.choices[0].message.content)
-
-        if not response or not response.choices:
-            return {"error": "Empty AI response"}
-
+        # Extract the AI response message content
         ai_content = response.choices[0].message.content.strip()
 
         # Extract JSON content if wrapped in triple quotes
-        json_match = re.search(r"```json\n(.*?)\n```", ai_content, re.DOTALL)
+        json_match = re.search(r'```json\n(.*?)\n```', ai_content, re.DOTALL)
         if json_match:
             ai_content = json_match.group(1).strip()
 
         # Convert string to JSON object
-        try:
-            return json.loads(ai_content)
-        except json.JSONDecodeError as e:
-            return {
-                "error": "Failed to parse AI response as JSON",
-                "raw_response": ai_content,
-                "exception": str(e)
-            }
+        return json.loads(ai_content)
 
     except Exception as e:
         return {"error": str(e)}
