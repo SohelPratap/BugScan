@@ -1,3 +1,4 @@
+/* General Styles */
 body {
     font-family: Arial, sans-serif;
     margin: 0;
@@ -5,6 +6,14 @@ body {
     text-align: center;
 }
 
+/* Logo */
+.logo {
+    height: 60px; /* Adjust size as needed */
+    width: auto;
+    vertical-align: middle;
+}
+
+/* Header & Footer */
 header, footer {
     background-color: #333;
     color: white;
@@ -17,7 +26,19 @@ header nav, footer nav {
     justify-content: space-between;
     align-items: center;
 }
+header {
+    background-color: #1a1a2e; /* New nav background color */
+    padding: 15px 20px;
+    text-align: center;
+}
 
+header nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+/* Navigation Links */
 nav a {
     color: white;
     text-decoration: none;
@@ -28,6 +49,7 @@ nav a:hover {
     text-decoration: underline;
 }
 
+/* Form */
 form {
     max-width: 300px;
     margin: auto;
@@ -35,6 +57,7 @@ form {
     border: 1px solid #ccc;
 }
 
+/* Input Fields */
 input {
     width: 100%;
     padding: 8px;
@@ -42,6 +65,7 @@ input {
     display: block;
 }
 
+/* Buttons */
 button {
     width: 100%;
     padding: 10px;
@@ -50,8 +74,40 @@ button {
     border: none;
 }
 
+/* Footer Links */
 .footer-links {
     display: flex;
     justify-content: center;
     gap: 20px;
+}
+
+/* Navigation Buttons */
+.nav-btn {
+    background-color: #1872e8;
+    border: none;
+    padding: 9px;
+    width: 100px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.nav-btn a {
+    text-decoration: none;
+    color: white;
+    font-size: 16px;
+}
+
+/* Button Hover Effects */
+.nav-btn:hover {
+    background-color: #105bb5;
+}
+
+/* Signup Button */
+.signup {
+    background-color: #28a745;
+}
+
+.signup:hover {
+    background-color: #218838;
 }

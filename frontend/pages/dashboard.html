@@ -3,14 +3,31 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>OneScan Dashboard</title>
+    <title>BugScan - Dashboard</title>
     <link rel="stylesheet" href="../assets/css/dashboard.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
 </head>
 <body>
+
+    <!-- Header with Navigation -->
     <header>
-        <div class="header-left">
-            <button class="hamburger" onclick="toggleSidebar()">☰</button>
-            <h1 class="title">OneScan</h1>
+        <div class="navbar">
+            <!-- Left Section: Hamburger + Logo -->
+            <div class="nav-left">
+                <button class="hamburger" onclick="toggleSidebar()">☰</button>
+                <a href="index.html">
+                    <img src="../assets/images/bugscann.png" alt="BugScan Logo" class="logo">
+                </a>
+            </div>
+
+            <!-- Right Section: Navigation Links + Profile Image -->
+            <div class="nav-right">
+                <a href="about.html">About</a>
+                <a href="services.html">Services</a>
+                <div class="profile-container">
+                    <img src="../assets/images/profile.png" alt="Profile" class="profile-img">
+                </div>
+            </div>
         </div>
     </header>
 
@@ -29,13 +46,6 @@
     </div>
 
     <script src="../assets/js/dashboard.js"></script>
-    <script>
-        // Load the header dynamically
-        fetch("../components/dheader.html")
-            .then(response => response.text())
-            .then(html => {
-                document.getElementById("header-container").innerHTML = html;
-            });
-    </script>
+
 </body>
 </html>

@@ -10,7 +10,7 @@ function loadContent(section) {
   switch (section) {
     case "dashboard":
       header.textContent = "Dashboard";
-      content.innerHTML = "<p>Welcome to the OneAudit Dashboard.</p>";
+      content.innerHTML = "<p>Welcome to the BugScan Dashboard.</p>";
       break;
     case "newScan":
       header.textContent = "New Scan";
