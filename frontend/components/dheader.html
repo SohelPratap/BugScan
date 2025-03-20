@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OneAudit Header</title>
+    <style>
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 20px;
+            background-color: #222;
+            color: white;
+            border-bottom: 1px solid #444;
+            position: relative;
+            z-index: 10; /* Ensure header stays above sidebar */
+        }
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .hamburger {
+            font-size: 24px;
+            cursor: pointer;
+            padding: 10px;
+            background-color: transparent;
+            color: white;
+            border: none;
+            outline: none;
+        }
+        .title {
+            font-size: 24px;
+            font-weight: bold;
+            margin: 0;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="header-left">
+            <button class="hamburger" onclick="toggleSidebar()">☰</button>
+            <h1 class="title">OneAudit</h1>
+        </div>
+    </header>
+</body>
+</html>

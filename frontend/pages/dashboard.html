@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OneAudit Dashboard</title>
+    <link rel="stylesheet" href="../assets/css/dashboard.css">
+</head>
+<body>
+    <header>
+        <div class="header-left">
+            <button class="hamburger" onclick="toggleSidebar()">☰</button>
+            <h1 class="title">OneAudit</h1>
+        </div>
+    </header>
+
+    <div class="container">
+        <aside class="sidebar" id="sidebar">
+            <button onclick="loadContent('dashboard')">Dashboard</button>
+            <button onclick="loadContent('newScan')">New Scan</button>
+            <button onclick="loadContent('reports')">Reports</button>
+        </aside>
+        <main class="main-content">
+            <h1 id="header">Dashboard</h1>
+            <div id="content">
+                <p>Welcome! Select an option from the sidebar.</p>
+            </div>
+        </main>
+    </div>
+
+    <script src="../assets/js/dashboard.js"></script>
+    <script>
+        // Load the header dynamically
+        fetch("../components/dheader.html")
+            .then(response => response.text())
+            .then(html => {
+                document.getElementById("header-container").innerHTML = html;
+            });
+    </script>
+</body>
+</html>
