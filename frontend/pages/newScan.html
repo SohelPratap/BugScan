@@ -7,8 +7,8 @@
     <link rel="stylesheet" href="../assets/css/newScan.css">
 </head>
 <body>
+    <div id="header-container"></div>
     <div class="scan-container">
-        <h1>New Scan</h1>
         <input type="text" id="scanUrl" placeholder="Enter website URL...">
         <div class="scan-buttons">
             <button onclick="startScan('light')">Light Scan</button>
@@ -16,7 +16,8 @@
         </div>
 
         <h3>Scan Comparison</h3>
-        <table>
+        <div class="table-wrapper">
+            <table>
             <thead>
                 <tr>
                     <th>Tests Performed</th>
@@ -31,9 +32,16 @@
                 <tr><td>Check for SQL Injection</td> <td>❌</td> <td>✔️</td></tr>
                 <tr><td>Check for Cross-Site Scripting (XSS)</td> <td>❌</td> <td>✔️</td></tr>
             </tbody>
-        </table>
-    </div>
+            </table>
+        </div>
 
+    <script>
+        fetch("../components/dheader.html")
+            .then(response => response.text())
+            .then(html => {
+                document.getElementById("header-container").innerHTML = html;
+            });
+    </script>
     <script src="../assets/js/newScan.js"></script>
 </body>
 </html>

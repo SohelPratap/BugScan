@@ -7,6 +7,7 @@ from urllib.parse import urlparse
 
 router = APIRouter()
 
+
 # Nmap
 @router.get("/scan/nmap/")
 async def scan_nmap(target: str):
@@ -39,7 +40,7 @@ async def scan_nikto(target: str):
     except Exception as e:
         return {"error": str(e)}
 
-
+#robots.txt
 @router.get("/scan/robots-txt/")
 async def scan_robots_txt(target: str):
     try:
@@ -57,7 +58,7 @@ async def scan_robots_txt(target: str):
     except Exception as e:
         return {"error": str(e)}
 
-
+#ssl 
 @router.get("/scan/ssl/")
 async def scan_ssl(target: str):
     try:
@@ -74,3 +75,7 @@ async def scan_ssl(target: str):
 
     except Exception as e:
         return {"error": str(e)}
+
+
+
+

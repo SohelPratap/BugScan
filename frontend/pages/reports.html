@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Scan Reports</title>
+    <link rel="stylesheet" href="../assets/css/reports.css">
+</head>
+<body>
+    <div id="header-container"></div>
+    <div class="reports-container">
+
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>P0 (Critical)</th>
+                            <th>P1 (High)</th>
+                            <th>P2 (Medium)</th>
+                            <th>P3 (Low)</th>
+                            <th>P4 (Informational)</th>
+                        </tr>
+                    </thead>
+                    <tbody id="report-table-body">
+                        <!-- Data will be dynamically inserted here -->
+                    </tbody>
+                </table>
+            </div>
+    </div>
+
+    <script>
+        fetch("../components/dheader.html")
+            .then(response => response.text())
+            .then(html => {
+                document.getElementById("header-container").innerHTML = html;
+            });
+    </script>
+    <script src="../assets/js/reports.js"></script>
+</body>
+</html>

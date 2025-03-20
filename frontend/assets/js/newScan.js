@@ -1,5 +1,3 @@
-
-
 document.addEventListener("DOMContentLoaded", function () {
     const lightScanButton = document.querySelector("button[onclick=\"startScan('light')\"]");
     const deepScanButton = document.querySelector("button[onclick=\"startScan('deep')\"]");
@@ -11,16 +9,16 @@ document.addEventListener("DOMContentLoaded", function () {
             return;
         }
 
-        alert(`${type === "light" ? "Light" : "Deep"} scan started for ${url}`);
-        
-        // Example: Sending URL to backend (Modify API endpoint as needed)
-        fetch("http://localhost:5000/api/scan", {
+        fetch("http://127.0.0.1:8000/scan/start/", {  // Replace with actual backend API
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ url, scanType: type }),
+            body: JSON.stringify({ url: url, scanType: type }),
         })
         .then(response => response.json())
-        .then(data => console.log("Scan Response:", data))
+        .then(data => {
+            console.log("Scan Response:", data);
+            alert(`Scan started for ${url}: ${data.message}`);
+        })
         .catch(error => console.error("Error:", error));
     }
 
