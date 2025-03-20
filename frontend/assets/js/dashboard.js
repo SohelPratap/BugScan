@@ -14,7 +14,15 @@ function loadContent(section) {
             break;
         case 'newScan':
             header.textContent = 'New Scan';
-            content.innerHTML = '<p>Start a new security scan here.</p>';
+            fetch('../pages/newScan.html')
+                .then(response => response.text())
+                .then(html => {
+                    content.innerHTML = html;
+                    const script = document.createElement('script');
+                    script.src = "../assets/js/newScan.js";
+                    document.body.appendChild(script);
+                })
+                .catch(error => console.error("Error loading scan page:", error));
             break;
         case 'reports':
             header.textContent = 'Reports';

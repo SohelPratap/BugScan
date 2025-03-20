@@ -1,0 +1,41 @@
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>New Security Scan - OneAudit</title>
+    <link rel="stylesheet" href="../assets/css/newScan.css">
+</head>
+<body>
+    <div class="scan-container">
+        <h2>Start a New Security Scan</h2>
+        <input type="text" id="scanUrl" placeholder="Enter website URL...">
+        <div class="scan-buttons">
+            <button onclick="startScan('light')">Light Scan</button>
+            <button onclick="startScan('deep')">Deep Scan</button>
+        </div>
+
+        <h3>Scan Comparison</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>Tests Performed</th>
+                    <th>Light Scan</th>
+                    <th>Deep Scan</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr><td>Fingerprint web server software</td> <td>✔️</td> <td>✔️</td></tr>
+                <tr><td>Analyze HTTP headers for security misconfiguration</td> <td>✔️</td> <td>✔️</td></tr>
+                <tr><td>Check the security of HTTP cookies</td> <td>✔️</td> <td>✔️</td></tr>
+                <tr><td>Check for SQL Injection</td> <td>❌</td> <td>✔️</td></tr>
+                <tr><td>Check for Cross-Site Scripting (XSS)</td> <td>❌</td> <td>✔️</td></tr>
+            </tbody>
+        </table>
+    </div>
+
+    <script src="../assets/js/newScan.js"></script>
+</body>
+</html>
