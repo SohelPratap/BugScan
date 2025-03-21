@@ -24,8 +24,20 @@
             <div class="nav-right">
                 <a href="about.html">About</a>
                 <a href="services.html">Services</a>
-                <div class="profile-container">
+                <!-- Profile Container -->
+                <div class="profile-container" onclick="toggleProfileDropdown()">
                     <img src="../assets/images/profile.png" alt="Profile" class="profile-img">
+                    <div class="profile-dropdown" id="profileDropdown">
+                        <div class="profile-info">
+                            <img src="../assets/images/profile.png" alt="Profile" class="profile-dropdown-img">
+                            <div class="profile-details">
+                                <p id="profile-name">User Name</p>
+                                <p id="profile-email">user@example.com</p>
+                            </div>
+                        </div>
+                        <button onclick="openProfileSettings()">Profile Settings</button>
+                        <button id="logoutBtn">Logout</button>
+                    </div>
                 </div>
             </div>
         </div>

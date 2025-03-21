@@ -216,6 +216,8 @@ h1 {
     display: flex;
     align-items: center;
     margin-right: 15px;
+    position: relative;
+    cursor: pointer;
 }
 
 .profile-img {
@@ -230,4 +232,60 @@ h1 {
 
 .profile-img:hover {
     border-color: #1872e8;
+}
+
+/* Profile Dropdown */
+.profile-dropdown {
+    position: absolute;
+    top: 50px;
+    right: 0;
+    background-color: white;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    width: 200px;
+    padding: 10px;
+    display: none;
+    flex-direction: column;
+    align-items: center;
+}
+
+.profile-dropdown.show {
+    display: flex;
+}
+
+.profile-info {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px;
+}
+
+.profile-dropdown-img {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+}
+
+.profile-details {
+    text-align: left;
+}
+
+.profile-details p {
+    margin: 5px 0;
+    font-size: 14px;
+    color: black; /* Changed color to black */
+}
+
+.profile-dropdown button {
+    width: 100%;
+    padding: 8px;
+    margin-top: 5px;
+    border: none;
+    cursor: pointer;
+    background-color: #f0f0f0;
+    border-radius: 5px;
+}
+
+.profile-dropdown button:hover {
+    background-color: #ddd;
 }

@@ -25,16 +25,26 @@ document.addEventListener("DOMContentLoaded", function () {
                 });
 
                 const data = await response.json();
+                console.log("🔹 API Response:", data); // Log API response for debugging
 
-                if (response.ok) {
+                if (response.ok && data.token) {
+                    console.log("✅ Login successful! Token received:", data.token);
+                    
+                    // Save token and user info
+                    localStorage.setItem("token", data.token);
+                    localStorage.setItem("userName", data.user.name);
+                    localStorage.setItem("userEmail", data.user.email);
+                    
+                    console.log("✅ Token and user info saved in localStorage:", localStorage.getItem("token"));
+
                     alert("Login successful!");
-                    localStorage.setItem("token", data.token); // Store JWT token
                     window.location.href = "dashboard.html"; // Redirect after login
                 } else {
-                    alert("Error: " + data.error);
+                    console.error("❌ Login error:", data.error || "No token received");
+                    alert("Error: " + (data.error || "Login failed."));
                 }
             } catch (error) {
-                console.error("Login failed:", error);
+                console.error("❌ Login failed:", error);
                 alert("Login failed. Please try again later.");
             }
         });
