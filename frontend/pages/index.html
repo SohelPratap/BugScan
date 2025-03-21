@@ -5,30 +5,40 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>BugScan - Home</title>
     <link rel="stylesheet" href="../assets/css/styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
 </head>
-<body>
+<body class="bg-image" style="background-image: url('../assets/images/home_bg.jpg'); background-size: cover; background-position: center;">
 
     <!-- Header -->
-<header>
-    <nav>
-        <div>
-            <a href="index.html">
-                <img src="../assets/images/bugscann.png" alt="BugScan Logo" class="logo">
-            </a>
-        </div>
-        <div>
-            <a href="about.html">About</a>
-            <a href="services.html">Services</a>
-            <button class="nav-btn"><a href="login.html">Login</a></button>
-            <button class="nav-btn signup"><a href="signup.html">Sign Up</a></button>
-        </div>
-    </nav>
-</header>
+    <header>
+        <nav>
+            <div>
+                <a href="index.html">
+                    <img src="../assets/images/bugscann.png" alt="BugScan Logo" class="logo">
+                </a>
+            </div>
+            <div class="nav-links">
+                <a href="about.html">About</a>
+                <a href="services.html">Services</a>
+                <button class="nav-btn"><a href="login.html">Login</a></button>
+                <button class="nav-btn signup"><a href="signup.html">Sign Up</a></button>
+            </div>
+        </nav>
+    </header>
 
-
+    <!-- Main Content -->
     <main>
-        <h2>Welcome to BugScan</h2>
-        <p>Your trusted scanner management system.</p>
+        <section class="intro-section">
+            <h2>Welcome to BugScan</h2>
+            <p>Your trusted scanner management system.</p>
+        </section>
+
+        <div class="info-container">
+            <p class="info-text">
+                BugScan helps developers and security professionals identify vulnerabilities in their code efficiently.
+            </p>
+            <img src="../assets/images/bug_page.jpg" alt="Security Scan" class="info-img">
+        </div>
     </main>
 
     <script src="../assets/js/script.js"></script>
