@@ -6,7 +6,7 @@ const app = express();
 
 // Re-enable CORS configuration
 app.use(cors({
-    origin: "http://127.0.0.1:3000", // Allow your frontend domain
+    origin: ["http://127.0.0.1:3000", "http://127.0.0.1:5500"], // Allow your frontend domain
     methods: ["GET", "POST", "PUT", "DELETE"],
     allowedHeaders: ["Content-Type", "Authorization"],
     credentials: true // Allow credentials if needed
