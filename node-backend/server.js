@@ -4,17 +4,17 @@ require("dotenv").config();
 
 const app = express();
 
-// Configure CORS properly
+// Re-enable CORS configuration
 app.use(cors({
-    origin: ["http://localhost:5500", "http://127.0.0.1:5500", "http://127.0.0.1:3000"], // Allow multiple frontend origins
-    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    origin: "http://127.0.0.1:3000", // Allow your frontend domain
+    methods: ["GET", "POST", "PUT", "DELETE"],
     allowedHeaders: ["Content-Type", "Authorization"],
-    optionsSuccessStatus: 200 // Ensure 200 status for OPTIONS requests
+    credentials: true // Allow credentials if needed
 }));
 
 app.use(express.json());
 
-// Handle preflight requests for CORS
+// Re-enable preflight CORS handling
 app.options("*", cors());
 
 const authRoutes = require("./api/authRoutes");

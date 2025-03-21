@@ -34,7 +34,7 @@ router.post("/register", async (req, res) => {
 
 const jwt = require("jsonwebtoken");
 
-const SECRET_KEY = process.env.JWT_SECRET || "your-secret-key"; // Store in .env
+const JWT_SECRET = process.env.JWT_SECRET || "your-secret-key"; // Store in .env
 const verifyToken = require("../middleware/authMiddleware");
 
 // ** User Login **
@@ -64,7 +64,7 @@ router.post("/login", async (req, res) => {
         }
 
         // Generate JWT token (replace `uuid` with `id`)
-        const token = jwt.sign({ id: user.id, email: user.email }, SECRET_KEY, { expiresIn: "7d" });
+        const token = jwt.sign({ id: user.id, email: user.email }, JWT_SECRET, { expiresIn: "7d" });
 
         res.json({ message: "Login successful!", token, user: { id: user.id, name: user.name, email: user.email } });
     } catch (error) {
@@ -73,6 +73,13 @@ router.post("/login", async (req, res) => {
 });
 
 router.get("/verify", verifyToken, (req, res) => {
+    const token = req.headers["authorization"]?.split(" ")[1];
+    console.log("🔍 Received Token in /auth/verify:", token);
+
+    if (!req.user) {
+        console.error("❌ No user found in request.");
+        return res.status(401).json({ error: "User not authenticated" });
+    }
     res.json({ message: "Token is valid", user: req.user });
 });
 

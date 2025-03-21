@@ -3,6 +3,18 @@ function toggleSidebar() {
   sidebar.classList.toggle("show");
 }
 
+document.addEventListener("DOMContentLoaded", function () {
+    const logoutButton = document.getElementById("logoutBtn");
+    if (logoutButton) {
+        logoutButton.addEventListener("click", function () {
+            console.log("🔴 Logout button clicked from Dashboard!");
+            logout();
+        });
+    } else {
+        console.error("❌ Logout button not found!");
+    }
+});
+
 function toggleProfileDropdown() {
     const dropdown = document.getElementById("profileDropdown");
     dropdown.classList.toggle("show");
@@ -13,9 +25,11 @@ function openProfileSettings() {
 }
 
 function logout() {
+    console.log("⚠️ Logout triggered from Dashboard! Clearing localStorage.");
     localStorage.removeItem("token"); // Remove token
     localStorage.removeItem("userName"); // Remove user name
     localStorage.removeItem("userEmail"); // Remove user email
+    localStorage.removeItem("loggedIn"); // Remove loggedIn flag
     window.location.href = "login.html"; // Redirect to login page
 }
 
@@ -29,16 +43,43 @@ document.addEventListener("click", function (event) {
     }
 });
 
-document.addEventListener("DOMContentLoaded", function () {
-    const userName = localStorage.getItem("userName");
-    const userEmail = localStorage.getItem("userEmail");
+document.addEventListener("DOMContentLoaded", async function () {
+    console.log("loggedIn flag:", localStorage.getItem("loggedIn"));
+    console.log("Stored Token:", localStorage.getItem("token"));
+    console.log("🔍 Checking token validity...");
+    const token = localStorage.getItem("token");
 
-    if (userName && userEmail) {
-        document.getElementById("profile-name").textContent = userName;
-        document.getElementById("profile-email").textContent = userEmail;
+    if (!token) {
+        console.warn("🚨 No token found.");
+        return;
     }
 
-    console.log("Dashboard loaded without token check.");
+    try {
+        const response = await fetch("http://localhost:5001/auth/verify", {
+            method: "GET",
+            headers: { "Authorization": `Bearer ${token}` }
+        });
+
+        const data = await response.json();
+        console.log("🔹 Full API Response from /auth/verify:", data);
+
+        if (!response.ok) {
+            console.warn("🚨 Token invalid, but NOT clearing localStorage immediately.");
+            return;
+        }
+
+        // Ensure user data exists before updating profile
+        if (data.user && data.user.name && data.user.email) {
+            localStorage.setItem("loggedIn", "true");
+            document.getElementById("profile-name").textContent = data.user.name;
+            document.getElementById("profile-email").textContent = data.user.email;
+            console.log("✅ User authenticated. Dashboard loaded.");
+        } else {
+            console.error("❌ User data is missing in API response:", data);
+        }
+    } catch (error) {
+        console.error("❌ Token verification failed:", error);
+    }
 });
 
 function loadContent(section) {
