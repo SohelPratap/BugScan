@@ -4,44 +4,69 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>New Scan - BugScan</title>
+    
+    <!-- External CSS -->
     <link rel="stylesheet" href="../assets/css/newScan.css">
+
+    <!-- Google Font for Modern Typography -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
 </head>
 <body>
-    <div id="header-container"></div>
+    
+    <!-- Scan Container -->
     <div class="scan-container">
+        <h2>Website Security Scan</h2>
+        
+        <!-- Input Field -->
         <input type="text" id="scanUrl" placeholder="Enter website URL...">
+
+        <!-- Scan Buttons -->
         <div class="scan-buttons">
             <button onclick="startScan('light')">Light Scan</button>
             <button onclick="startScan('deep')">Deep Scan</button>
         </div>
 
+        <!-- Scan Comparison Table -->
         <h3>Scan Comparison</h3>
         <div class="table-wrapper">
             <table>
-            <thead>
-                <tr>
-                    <th>Tests Performed</th>
-                    <th>Light Scan</th>
-                    <th>Deep Scan</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr><td>Fingerprint web server software</td> <td>✔️</td> <td>✔️</td></tr>
-                <tr><td>Analyze HTTP headers for security misconfiguration</td> <td>✔️</td> <td>✔️</td></tr>
-                <tr><td>Check the security of HTTP cookies</td> <td>✔️</td> <td>✔️</td></tr>
-                <tr><td>Check for SQL Injection</td> <td>❌</td> <td>✔️</td></tr>
-                <tr><td>Check for Cross-Site Scripting (XSS)</td> <td>❌</td> <td>✔️</td></tr>
-            </tbody>
+                <thead>
+                    <tr>
+                        <th>Tests Performed</th>
+                        <th>Light Scan</th>
+                        <th>Deep Scan</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr><td>Fingerprint web server software</td> <td>✔️</td> <td>✔️</td></tr>
+                    <tr><td>Analyze HTTP headers for security misconfiguration</td> <td>✔️</td> <td>✔️</td></tr>
+                    <tr><td>Check the security of HTTP cookies</td> <td>✔️</td> <td>✔️</td></tr>
+                    <tr><td>Check for SQL Injection</td> <td>❌</td> <td>✔️</td></tr>
+                    <tr><td>Check for Cross-Site Scripting (XSS)</td> <td>❌</td> <td>✔️</td></tr>
+                </tbody>
             </table>
         </div>
+    </div>
 
+    <!-- JavaScript -->
     <script>
         fetch("../components/dheader.html")
             .then(response => response.text())
             .then(html => {
                 document.getElementById("header-container").innerHTML = html;
             });
+
+        function startScan(type) {
+            let url = document.getElementById("scanUrl").value;
+            if (!url) {
+                alert("Please enter a website URL!");
+                return;
+            }
+            alert(type.charAt(0).toUpperCase() + type.slice(1) + " scan started for " + url);
+            // Add API request logic here if needed
+        }
     </script>
+    
     <script src="../assets/js/newScan.js"></script>
     
 </body>
