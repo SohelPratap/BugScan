@@ -1,25 +1,41 @@
 document.addEventListener("DOMContentLoaded", function () {
-    const form = document.querySelector("form");
+    const form = document.getElementById("loginForm");
 
     if (form) {
-        form.addEventListener("submit", function (e) {
+        form.addEventListener("submit", async function (e) {
             e.preventDefault();
-            const inputs = form.querySelectorAll("input");
-            let isValid = true;
 
-            inputs.forEach(input => {
-                if (input.value.trim() === "") {
-                    isValid = false;
-                    alert("Please fill in all fields.");
-                }
-            });
+            const email = document.getElementById("email").value.trim();
+            const password = document.getElementById("password").value.trim();
 
-            if (isValid) {
-                if (form.id === "loginForm") {
+            if (!email || !password) {
+                alert("Please fill in all fields.");
+                return;
+            }
+
+            const backendUrl = "http://localhost:5001"; // Ensure this matches your backend URL
+
+            try {
+                const response = await fetch(`${backendUrl}/auth/login`, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({ email, password })
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
                     alert("Login successful!");
-                } else if (form.id === "signupForm") {
-                    alert("Signup successful!");
+                    localStorage.setItem("token", data.token); // Store JWT token
+                    window.location.href = "dashboard.html"; // Redirect after login
+                } else {
+                    alert("Error: " + data.error);
                 }
+            } catch (error) {
+                console.error("Login failed:", error);
+                alert("Login failed. Please try again later.");
             }
         });
     }

@@ -1,7 +1,7 @@
 const express = require("express");
 const supabase = require("../config/supabaseClient");
 const bcrypt = require("bcryptjs");
-const { v4: uuidv4 } = require("uuid");
+// Removed uuidv4 as Supabase auto-generates id
 
 const router = express.Router();
 
@@ -18,17 +18,14 @@ router.post("/register", async (req, res) => {
         const salt = await bcrypt.genSalt(10);
         const hashedPassword = await bcrypt.hash(password, salt);
 
-        // Generate unique user ID
-        const userId = uuidv4();
-
         // Insert user into Supabase
         const { data, error } = await supabase
             .from("users")
-            .insert([{ uuid: userId, name, email, password_hash: hashedPassword }]);
+            .insert([{ name, email, password_hash: hashedPassword }]);
 
         if (error) throw error;
 
-        res.json({ message: "User registered successfully!", userId });
+        res.json({ message: "User registered successfully!" });
     } catch (error) {
         res.status(500).json({ error: error.message });
     }
@@ -38,6 +35,7 @@ router.post("/register", async (req, res) => {
 const jwt = require("jsonwebtoken");
 
 const SECRET_KEY = process.env.JWT_SECRET || "your-secret-key"; // Store in .env
+const verifyToken = require("../middleware/authMiddleware");
 
 // ** User Login **
 router.post("/login", async (req, res) => {
@@ -48,10 +46,10 @@ router.post("/login", async (req, res) => {
     }
 
     try {
-        // Fetch user from Supabase
+        // Fetch user from Supabase (replace `uuid` with `id`)
         const { data: user, error } = await supabase
             .from("users")
-            .select("uuid, name, email, password_hash")
+            .select("id, name, email, password_hash")
             .eq("email", email)
             .single();
 
@@ -65,12 +63,17 @@ router.post("/login", async (req, res) => {
             return res.status(400).json({ error: "Invalid email or password" });
         }
 
-        // Generate JWT token
-        const token = jwt.sign({ uuid: user.uuid, email: user.email }, SECRET_KEY, { expiresIn: "7d" });
+        // Generate JWT token (replace `uuid` with `id`)
+        const token = jwt.sign({ id: user.id, email: user.email }, SECRET_KEY, { expiresIn: "7d" });
 
-        res.json({ message: "Login successful!", token, user: { uuid: user.uuid, name: user.name, email: user.email } });
+        res.json({ message: "Login successful!", token, user: { id: user.id, name: user.name, email: user.email } });
     } catch (error) {
         res.status(500).json({ error: error.message });
     }
 });
 
+router.get("/verify", verifyToken, (req, res) => {
+    res.json({ message: "Token is valid", user: req.user });
+});
+
+module.exports = router;
