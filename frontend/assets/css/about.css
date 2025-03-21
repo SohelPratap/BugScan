@@ -1,0 +1,93 @@
+/* General Styles */
+body {
+    font-family: 'Poppins', sans-serif;
+    margin: 0;
+    padding: 0;
+    text-align: center;
+    background-color: #f4f4f4; /* Light background */
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Header */
+header {
+    background-color: #1a1a2e;
+    color: white;
+    padding: 15px 20px;
+    text-align: center;
+    position: relative;
+}
+
+header nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+/* Logo */
+.logo {
+    height: 60px;
+    width: auto;
+    vertical-align: middle;
+}
+
+/* Navigation Links */
+nav a {
+    color: white;
+    text-decoration: none;
+    margin: 0 10px;
+}
+
+nav a:hover {
+    text-decoration: underline;
+}
+
+/* Navigation Buttons */
+.nav-btn {
+    background-color: #1872e8;
+    border: none;
+    padding: 9px;
+    width: 100px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.nav-btn a {
+    text-decoration: none;
+    color: white;
+    font-size: 16px;
+}
+
+/* Button Hover Effects */
+.nav-btn:hover {
+    background-color: #105bb5;
+}
+
+/* Signup Button */
+.signup {
+    background-color: #28a745;
+}
+
+.signup:hover {
+    background-color: #218838;
+}
+
+/* Paragraph Container */
+.about-content {
+    max-width: 800px;
+    margin: 20px auto;
+    padding: 15px;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0px 10px 15px rgba(0, 0, 0, 0.1);
+}
+
+/* Paragraph */
+.about-content p {
+    font-family: 'Poppins', sans-serif;
+    color: #333;
+    font-size: 18px;
+    max-width: 100%;
+}
