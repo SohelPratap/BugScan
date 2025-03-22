@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BugScan - Dashboard</title>
+    <link rel="stylesheet" href="../assets/css/dashboard.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+</head>
+<body>
+
+    <!-- Header with Navigation -->
+    <header>
+        <div class="navbar">
+            <!-- Left Section: Hamburger + Logo -->
+            <div class="nav-left">
+                <button class="hamburger" onclick="toggleSidebar()">☰</button>
+                <a href="index.html">
+                    <img src="../assets/images/bugscann.png" alt="BugScan Logo" class="logo">
+                </a>
+            </div>
+
+            <!-- Right Section: Navigation Links + Profile Image -->
+            <div class="nav-right">
+                <a href="about.html">About</a>
+                <a href="services.html">Services</a>
+                <!-- Profile Container -->
+                <div class="profile-container" onclick="toggleProfileDropdown()">
+                    <img src="../assets/images/profile.png" alt="Profile" class="profile-img">
+                    <div class="profile-dropdown" id="profileDropdown">
+                        <div class="profile-info">
+                            <img src="../assets/images/profile.png" alt="Profile" class="profile-dropdown-img">
+                            <div class="profile-details">
+                                <p id="profile-name">User Name</p>
+                                <p id="profile-email">user@example.com</p>
+                            </div>
+                        </div>
+                        <button onclick="openProfileSettings()">Profile Settings</button>
+                        <button id="logoutBtn">Logout</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <div class="container">
+        <aside class="sidebar" id="sidebar">
+            <button onclick="loadContent('dashboard')">Dashboard</button>
+            <button onclick="loadContent('newScan')">New Scan</button>
+            <button onclick="loadContent('reports')">Reports</button>
+        </aside>
+        <main class="main-content">
+            <h1 id="header">Dashboard</h1>
+            <div id="content">
+                <p>Welcome! Select an option from the sidebar.</p>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        function showLoadingScreen() {
+            const loadingOverlay = document.createElement("div");
+            loadingOverlay.id = "loadingOverlay";
+            loadingOverlay.innerHTML = `
+                <div class="loading-popup">
+                    <div class="spinner"></div>
+                    <p>Scanning in progress... Please wait.</p>
+                </div>
+            `;
+            document.body.appendChild(loadingOverlay);
+        }
+
+        function hideLoadingScreen() {
+            const loadingOverlay = document.getElementById("loadingOverlay");
+            if (loadingOverlay) {
+                document.body.removeChild(loadingOverlay);
+            }
+        }
+
+        async function startScan(type) {
+            const url = document.getElementById("scanUrl").value.trim();
+            if (!url) {
+                alert("Please enter a valid URL.");
+                return;
+            }
+
+            showLoadingScreen(); // Show loading popup
+
+            try {
+                const response = await fetch("http://127.0.0.1:8000/scan/start/", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ url: url, scanType: type }),
+                });
+
+                if (!response.ok) {
+                    throw new Error("Scan failed. Please try again.");
+                }
+
+                const data = await response.json();
+                console.log("✅ Scan Response:", data);
+
+                alert(`Scan completed for ${url}`);
+
+                // Display scan results (to be implemented later)
+            } catch (error) {
+                console.error("❌ Scan Error:", error);
+                alert("An error occurred during scanning.");
+            } finally {
+                hideLoadingScreen(); // Hide loading popup
+            }
+        }
+    </script>
+
+    <script src="../assets/js/dashboard.js"></script>
+
+</body>
+</html>
