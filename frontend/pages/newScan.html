@@ -4,70 +4,150 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>New Scan - BugScan</title>
-    
-    <!-- External CSS -->
     <link rel="stylesheet" href="../assets/css/newScan.css">
-
-    <!-- Google Font for Modern Typography -->
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
 </head>
 <body>
-    
-    <!-- Scan Container -->
+    <div id="header-container"></div>
     <div class="scan-container">
-        <h2>Website Security Scan</h2>
-        
-        <!-- Input Field -->
         <input type="text" id="scanUrl" placeholder="Enter website URL...">
-
-        <!-- Scan Buttons -->
         <div class="scan-buttons">
             <button onclick="startScan('light')">Light Scan</button>
             <button onclick="startScan('deep')">Deep Scan</button>
         </div>
 
-        <!-- Scan Comparison Table -->
         <h3>Scan Comparison</h3>
         <div class="table-wrapper">
             <table>
-                <thead>
-                    <tr>
-                        <th>Tests Performed</th>
-                        <th>Light Scan</th>
-                        <th>Deep Scan</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr><td>Fingerprint web server software</td> <td>✔️</td> <td>✔️</td></tr>
-                    <tr><td>Analyze HTTP headers for security misconfiguration</td> <td>✔️</td> <td>✔️</td></tr>
-                    <tr><td>Check the security of HTTP cookies</td> <td>✔️</td> <td>✔️</td></tr>
-                    <tr><td>Check for SQL Injection</td> <td>❌</td> <td>✔️</td></tr>
-                    <tr><td>Check for Cross-Site Scripting (XSS)</td> <td>❌</td> <td>✔️</td></tr>
-                </tbody>
+            <thead>
+                <tr>
+                    <th>Tests Performed</th>
+                    <th>Light Scan</th>
+                    <th>Deep Scan</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr><td>Fingerprint web server software</td> <td>✔️</td> <td>✔️</td></tr>
+                <tr><td>Analyze HTTP headers for security misconfiguration</td> <td>✔️</td> <td>✔️</td></tr>
+                <tr><td>Check the security of HTTP cookies</td> <td>✔️</td> <td>✔️</td></tr>
+                <tr><td>Check for SQL Injection</td> <td>❌</td> <td>✔️</td></tr>
+                <tr><td>Check for Cross-Site Scripting (XSS)</td> <td>❌</td> <td>✔️</td></tr>
+            </tbody>
             </table>
         </div>
-    </div>
 
-    <!-- JavaScript -->
     <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const lightScanButton = document.querySelector("button[onclick=\"startScan('light')\"]");
+            const deepScanButton = document.querySelector("button[onclick=\"startScan('deep')\"]");
+
+            function showLoadingScreen() {
+                let loadingOverlay = document.getElementById("loadingOverlay");
+                if (!loadingOverlay) {
+                    loadingOverlay = document.createElement("div");
+                    loadingOverlay.id = "loadingOverlay";
+                    loadingOverlay.innerHTML = `
+                        <div class="loading-popup">
+                            <div class="spinner"></div>
+                            <p>Scanning in progress... Please wait.</p>
+                        </div>
+                    `;
+                    document.body.appendChild(loadingOverlay);
+                }
+            }
+
+            function hideLoadingScreen() {
+                const loadingOverlay = document.getElementById("loadingOverlay");
+                if (loadingOverlay) {
+                    document.body.removeChild(loadingOverlay);
+                }
+            }
+
+            async function startScan(type) {
+                const url = document.getElementById("scanUrl").value.trim();
+                if (!url) {
+                    alert("Please enter a valid URL.");
+                    return;
+                }
+
+                showLoadingScreen(); // Show loading popup
+
+                try {
+                    const response = await fetch("http://127.0.0.1:8000/scan/start/", {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({ url: url, scanType: type }),
+                    });
+
+                    if (!response.ok) {
+                        throw new Error("Scan failed. Please try again.");
+                    }
+
+                    const data = await response.json();
+                    console.log("✅ Scan Response:", data);
+
+                    alert(`Scan completed for ${url}`);
+                    alert("Saving scan results...");
+
+                    // Send scan data to backend for saving
+                    await saveScanToBackend(data);
+
+                } catch (error) {
+                    console.error("❌ Scan Error:", error);
+                    alert("An error occurred during scanning.");
+                } finally {
+                    hideLoadingScreen(); // Hide loading popup
+                }
+            }
+
+            async function saveScanToBackend(scanData) {
+                const user = JSON.parse(localStorage.getItem("user"));
+                if (!user || !user.email) {
+                    console.warn("🚨 No user found. Login required.");
+                    alert("You need to log in to save your scan.");
+                    return;
+                }
+
+                const email = user.email;
+
+                try {
+                    // Send scan data to backend for saving in Supabase
+                    const response = await fetch("http://127.0.0.1:5001/scan/save", {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json",
+                            "Authorization": `Bearer ${localStorage.getItem("token")}` // Authorization header
+                        },
+                        body: JSON.stringify({
+                            scanData: scanData, // Sending scan data as is
+                            email: email
+                        })
+                    });
+
+                    const data = await response.json();
+
+                    if (response.ok) {
+                        alert("Scan successfully saved to the database!");
+                        // Redirection logic removed: user stays on the same page.
+                    } else {
+                        alert("Error saving scan: " + data.error);
+                    }
+                } catch (error) {
+                    console.error("❌ Error saving scan:", error);
+                    alert("Failed to save scan. Try again.");
+                }
+            }
+
+            // Attach event listeners
+            if (lightScanButton) lightScanButton.addEventListener("click", () => startScan("light"));
+            if (deepScanButton) deepScanButton.addEventListener("click", () => startScan("deep"));
+        });
+
         fetch("../components/dheader.html")
             .then(response => response.text())
             .then(html => {
                 document.getElementById("header-container").innerHTML = html;
             });
-
-        function startScan(type) {
-            let url = document.getElementById("scanUrl").value;
-            if (!url) {
-                alert("Please enter a website URL!");
-                return;
-            }
-            alert(type.charAt(0).toUpperCase() + type.slice(1) + " scan started for " + url);
-            // Add API request logic here if needed
-        }
     </script>
-    
     <script src="../assets/js/newScan.js"></script>
-    
 </body>
 </html>
