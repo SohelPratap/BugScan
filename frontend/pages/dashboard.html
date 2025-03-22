@@ -6,6 +6,7 @@
     <title>BugScan - Dashboard</title>
     <link rel="stylesheet" href="../assets/css/dashboard.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script> <!-- Chart.js CDN -->
 </head>
 <body>
 
@@ -47,16 +48,51 @@
             <button onclick="loadContent('newScan')">New Scan</button>
             <button onclick="loadContent('reports')">Reports</button>
         </aside>
+        
         <main class="main-content">
             <h1 id="header">Dashboard</h1>
             <div id="content">
                 <p>Welcome! Select an option from the sidebar.</p>
+                
+                <!-- Donut Chart Section -->
+                <div class="chart-container">
+                    <canvas id="severityChart"></canvas>
+                </div>
             </div>
         </main>
     </div>
 
     <script src="../assets/js/dashboard.js"></script>
     
+    <script>
+        // Chart.js Donut Chart
+        const ctx = document.getElementById('severityChart').getContext('2d');
+        const severityChart = new Chart(ctx, {
+            type: 'doughnut',
+            data: {
+                labels: ["P0 (Critical)", "P1 (High)", "P2 (Medium)", "P3 (Low)", "P4 (Informational)"],
+                datasets: [{
+                    data: [10, 25, 30, 20, 15], // Example values, modify as needed
+                    backgroundColor: [
+                        "#FF0000",  // P0 - Critical (Red)
+                        "#FF5733",  // P1 - High (Orange)
+                        "#FFC300",  // P2 - Medium (Yellow)
+                        "#28A745",  // P3 - Low (Green)
+                        "#007BFF"   // P4 - Informational (Blue)
+                    ],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        position: 'right'
+                    }
+                }
+            }
+        });
+    </script>
 
 </body>
 </html>
