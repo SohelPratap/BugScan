@@ -41,7 +41,6 @@
             const deepScanButton = document.querySelector("button[onclick=\"startScan('deep')\"]");
 
             function showLoadingScreen() {
-                console.log("🔄 Showing loading overlay..."); // Debugging log
                 let loadingOverlay = document.getElementById("loadingOverlay");
                 if (!loadingOverlay) {
                     loadingOverlay = document.createElement("div");
@@ -54,29 +53,16 @@
                     `;
                     document.body.appendChild(loadingOverlay);
                 }
-                // Ensure visibility and proper styling
-                loadingOverlay.style.display = "flex";
-                loadingOverlay.style.position = "fixed"; 
-                loadingOverlay.style.top = "0";
-                loadingOverlay.style.left = "0";
-                loadingOverlay.style.width = "100vw";
-                loadingOverlay.style.height = "100vh";
-                loadingOverlay.style.background = "rgba(0,0,0,0.5)";
-                loadingOverlay.style.zIndex = "9999";
-                loadingOverlay.style.justifyContent = "center";
-                loadingOverlay.style.alignItems = "center";
             }
 
             function hideLoadingScreen() {
-                console.log("❌ Hiding loading overlay..."); // Debugging log
                 const loadingOverlay = document.getElementById("loadingOverlay");
                 if (loadingOverlay) {
-                    loadingOverlay.style.display = "none";
+                    document.body.removeChild(loadingOverlay);
                 }
             }
 
             async function startScan(type) {
-                console.log("🔍 Start Scan Function Called"); // Debugging log
                 const url = document.getElementById("scanUrl").value.trim();
                 if (!url) {
                     alert("Please enter a valid URL.");
