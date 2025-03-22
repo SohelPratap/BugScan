@@ -17,8 +17,14 @@ app.use(express.json());
 // Re-enable preflight CORS handling
 app.options("*", cors());
 
+// Import routes
 const authRoutes = require("./api/authRoutes");
+const scanRoutes = require("./api/scanRoutes"); // Import the scan routes
+
+// Use routes
 app.use("/auth", authRoutes);
+app.use("/scan", scanRoutes); // Use scan routes under "/scan" path
+
 
 const PORT = process.env.PORT || 5001; // Updated the port to 5001
 
