@@ -167,8 +167,106 @@ h1 {
     }
 }
 
-/* Profile Image */
-.profile-container {
+/* Logo text in header */
+.logo-text {
+    font-size: 22px;
+    font-weight: 700;
+    color: white;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    letter-spacing: 0.02em;
+}
+
+.logo-text i {
+    color: #1872e8;
+}
+
+/* User greeting */
+.user-greeting {
+    font-size: 14px;
+    color: #ddd;
+    white-space: nowrap;
+}
+
+/* Logout button */
+.logout-btn {
+    background-color: #e74c3c;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-family: 'Poppins', sans-serif;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    transition: background-color 0.2s, transform 0.15s;
+}
+
+.logout-btn:hover {
+    background-color: #c0392b;
+    transform: translateY(-1px);
+}
+
+/* Action buttons on dashboard landing */
+.action-buttons {
+    display: flex;
+    gap: 16px;
+    justify-content: center;
+    margin-top: 24px;
+    flex-wrap: wrap;
+}
+
+.btn-primary {
+    background-color: #1872e8;
+    color: white;
+    border: none;
+    padding: 12px 28px;
+    border-radius: 8px;
+    font-size: 15px;
+    font-family: 'Poppins', sans-serif;
+    font-weight: 600;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    transition: background-color 0.2s, transform 0.15s, box-shadow 0.15s;
+}
+
+.btn-primary:hover {
+    background-color: #105bb5;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(24, 114, 232, 0.35);
+}
+
+.btn-secondary {
+    background-color: #6c757d;
+    color: white;
+    border: none;
+    padding: 12px 28px;
+    border-radius: 8px;
+    font-size: 15px;
+    font-family: 'Poppins', sans-serif;
+    font-weight: 600;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    transition: background-color 0.2s, transform 0.15s;
+}
+
+.btn-secondary:hover {
+    background-color: #545b62;
+    transform: translateY(-2px);
+}
+
+/* Active sidebar item */
+.sidebar button.active {
+    background-color: #1872e8;
+    color: white;
+}
     display: flex;
     align-items: center;
     margin-right: 15px;

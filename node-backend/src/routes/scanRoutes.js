@@ -15,7 +15,7 @@ router.post("/save", verifyToken, async (req, res) => {
 
   try {
     const target = scanData.target || "unknown";
-    const aiResults = scanData.ai_classification || [];
+    const aiResults = (scanData.ai_classification && scanData.ai_classification.results) || [];
 
     // Count severities
     const severityCount = aiResults.length;

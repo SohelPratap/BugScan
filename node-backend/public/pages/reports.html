@@ -3,31 +3,76 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Scan Reports</title>
+    <title>Scan Reports - BugScan</title>
+    <link rel="stylesheet" href="../assets/css/dashboard.css" />
     <link rel="stylesheet" href="../assets/css/reports.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
   </head>
   <body>
+
+    <!-- Dashboard header (loaded via JS) -->
     <div id="header-container"></div>
-    <div class="reports-container">
-      <div class="table-wrapper">
-        <table>
-          <thead>
-            <tr>
-              <th>Target</th>
-              <th>Date</th>
-              <th>P0 (Critical)</th>
-              <th>P1 (High)</th>
-              <th>P2 (Medium)</th>
-              <th>P3/P4 (Low/Info)</th>
-            </tr>
-          </thead>
-          <tbody id="report-table-body">
-            <!-- Data will be dynamically inserted here -->
-          </tbody>
-        </table>
-      </div>
+
+    <div class="container">
+      <!-- Sidebar -->
+      <aside class="sidebar" id="sidebar">
+        <button onclick="window.location.href='dashboard.html'"><i class="fas fa-home"></i> Dashboard</button>
+        <button onclick="window.location.href='newScan.html'"><i class="fas fa-plus-circle"></i> New Scan</button>
+        <button class="active" onclick="window.location.href='reports.html'"><i class="fas fa-file-alt"></i> Reports</button>
+        <button onclick="window.location.href='services.html'"><i class="fas fa-cogs"></i> Services</button>
+        <button onclick="window.location.href='about.html'"><i class="fas fa-info-circle"></i> About</button>
+      </aside>
+
+      <main class="main-content">
+        <div id="content" style="width:100%;padding:20px;">
+          <h1><i class="fas fa-file-alt"></i> Scan Reports</h1>
+          <div class="reports-container">
+            <div class="table-wrapper">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Target</th>
+                    <th>Date</th>
+                    <th>P0 (Critical)</th>
+                    <th>P1 (High)</th>
+                    <th>P2 (Medium)</th>
+                    <th>P3/P4 (Low/Info)</th>
+                  </tr>
+                </thead>
+                <tbody id="report-table-body">
+                  <!-- Data will be dynamically inserted here -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </main>
     </div>
 
+    <script src="../assets/js/api-config.js"></script>
     <script src="../assets/js/reports.js"></script>
+    <script>
+      // Load dashboard header and set greeting
+      fetch("../components/dheader.html")
+        .then(r => r.text())
+        .then(html => {
+          document.getElementById("header-container").innerHTML = html;
+          const name = localStorage.getItem("userName");
+          const el = document.getElementById("userGreeting");
+          if (el && name) el.textContent = `Welcome, ${name}!`;
+        });
+
+      function toggleSidebar() {
+        document.querySelector(".sidebar").classList.toggle("show");
+      }
+
+      function logout() {
+        if (confirm("Are you sure you want to logout?")) {
+          API.logout();
+          window.location.href = "login.html";
+        }
+      }
+    </script>
   </body>
 </html>
