@@ -19,14 +19,13 @@ const hashPassword = async (password) => {
 // ** Register User **
 router.post("/register", async (req, res) => {
     const { name, email, password } = req.body;
-    let hashedPassword = null;
 
     if (!name || !email || !password) {
         return res.status(400).json({ error: "All fields are required" });
     }
 
     // Hash once for both primary and fallback paths
-    hashedPassword = await hashPassword(password);
+    const hashedPassword = await hashPassword(password);
 
     try {
         // Check if user already exists

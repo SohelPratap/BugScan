@@ -49,7 +49,9 @@ async function writeStore(store) {
 function enqueueOperation(operation) {
     const next = writeQueue.then(() => operation());
     // Avoid keeping the queue in a rejected state while preserving the original resolution
-    writeQueue = next.catch(() => {});
+    writeQueue = next.catch((error) => {
+        console.error("Fallback user store operation failed:", error);
+    });
     return next;
 }
 
