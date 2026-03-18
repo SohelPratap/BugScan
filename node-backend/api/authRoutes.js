@@ -8,17 +8,17 @@ const fallbackUserStore = require("../config/fallbackUserStore");
 const router = express.Router();
 const JWT_SECRET = process.env.JWT_SECRET;
 
-const isConnectionError = (error) => {
-    return [
-        "ECONNREFUSED",
-        "ER_ACCESS_DENIED_ERROR",
-        "ER_BAD_DB_ERROR",
-        "ETIMEDOUT",
-        "ENOTFOUND",
-        "PROTOCOL_CONNECTION_LOST",
-        "ER_CON_COUNT_ERROR"
-    ].includes(error?.code);
-};
+const CONNECTION_ERROR_CODES = [
+    "ECONNREFUSED",
+    "ER_ACCESS_DENIED_ERROR",
+    "ER_BAD_DB_ERROR",
+    "ETIMEDOUT",
+    "ENOTFOUND",
+    "PROTOCOL_CONNECTION_LOST",
+    "ER_CON_COUNT_ERROR"
+];
+
+const isConnectionError = (error) => CONNECTION_ERROR_CODES.includes(error?.code);
 
 // ** Register User **
 router.post("/register", async (req, res) => {

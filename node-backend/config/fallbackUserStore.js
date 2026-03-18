@@ -28,21 +28,21 @@ async function writeUsers(users) {
     await fs.writeFile(STORE_PATH, JSON.stringify(users, null, 2), "utf-8");
 }
 
-// Serialize write operations to avoid race conditions
+// Serialize operations to avoid race conditions
 function enqueueWrite(operation) {
-    const next = writeQueue.then(operation, operation);
-    // Avoid keeping the queue in a rejected state
+    const next = writeQueue.then(() => operation());
+    // Avoid keeping the queue in a rejected state while preserving the original resolution
     writeQueue = next.catch(() => {});
     return next;
 }
 
 async function findUserByEmail(email) {
-    // Ensure pending writes finish before reading
-    await writeQueue;
-    const users = await readUsers();
-    return users.find(
-        (user) => user.email && user.email.toLowerCase() === email.toLowerCase()
-    );
+    return enqueueWrite(async () => {
+        const users = await readUsers();
+        return users.find(
+            (user) => user.email && user.email.toLowerCase() === email.toLowerCase()
+        );
+    });
 }
 
 async function insertUser(user) {
