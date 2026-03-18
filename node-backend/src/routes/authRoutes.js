@@ -6,7 +6,7 @@ const verifyToken = require("../middleware/authMiddleware");
 const fallback = require("../config/fallbackUserStore");
 
 const router = express.Router();
-const JWT_SECRET = process.env.JWT_SECRET || "bugscan_dev_secret";
+const JWT_SECRET = require("../config/jwtSecret");
 
 // ** Register User **
 router.post("/register", async (req, res) => {

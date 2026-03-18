@@ -1,0 +1,24 @@
+# Node
+node_modules/
+*.log
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyc
+*.pyo
+.python-version
+oaenv/
+venv/
+.venv/
+
+# OS
+.DS_Store
+.idea/
+
+# Build artifacts
+dist/
+build/
+
+# Secrets
+.env

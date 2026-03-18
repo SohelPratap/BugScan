@@ -1,5 +1,5 @@
 const jwt = require("jsonwebtoken");
-const JWT_SECRET = process.env.JWT_SECRET || "bugscan_dev_secret";
+const JWT_SECRET = require("../config/jwtSecret");
 
 const verifyToken = (req, res, next) => {
     const token = req.headers["authorization"]?.split(" ")[1];

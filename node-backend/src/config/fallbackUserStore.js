@@ -32,8 +32,10 @@ const fallbackUserStore = {
 
     create({ name, email, password_hash }) {
         const users = readStore();
+        // Combine timestamp with a random suffix to prevent collisions
+        const id = Date.now() * 1000 + Math.floor(Math.random() * 1000);
         const newUser = {
-            id: users.length > 0 ? Math.max(...users.map(u => u.id)) + 1 : 1,
+            id,
             name,
             email,
             password_hash,

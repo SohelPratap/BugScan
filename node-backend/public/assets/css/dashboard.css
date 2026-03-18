@@ -267,6 +267,9 @@ h1 {
     background-color: #1872e8;
     color: white;
 }
+
+/* Profile Image */
+.profile-container {
     display: flex;
     align-items: center;
     margin-right: 15px;
