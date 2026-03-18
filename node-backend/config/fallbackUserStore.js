@@ -25,8 +25,12 @@ async function readUsers() {
 }
 
 async function writeUsers(users) {
-    await fs.mkdir(path.dirname(STORE_PATH), { recursive: true });
-    await fs.writeFile(STORE_PATH, JSON.stringify(users, null, 2), "utf-8");
+    try {
+        await fs.mkdir(path.dirname(STORE_PATH), { recursive: true });
+        await fs.writeFile(STORE_PATH, JSON.stringify(users, null, 2), "utf-8");
+    } catch (error) {
+        throw new Error(`Unable to persist fallback users: ${error.message}`);
+    }
 }
 
 // Serialize operations to avoid race conditions
