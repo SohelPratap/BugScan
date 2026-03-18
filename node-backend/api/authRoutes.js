@@ -19,11 +19,14 @@ const hashPassword = async (password) => {
 // ** Register User **
 router.post("/register", async (req, res) => {
     const { name, email, password } = req.body;
-    let hashedPassword;
+    let hashedPassword = null;
 
     if (!name || !email || !password) {
         return res.status(400).json({ error: "All fields are required" });
     }
+
+    // Hash once for both primary and fallback paths
+    hashedPassword = await hashPassword(password);
 
     try {
         // Check if user already exists
@@ -35,9 +38,6 @@ router.post("/register", async (req, res) => {
         if (existingUser.length > 0) {
             return res.status(400).json({ error: "User already exists" });
         }
-
-        // Hash password
-        hashedPassword = await hashPassword(password);
 
         // Insert user into database
         await db.query(
@@ -54,10 +54,6 @@ router.post("/register", async (req, res) => {
                 const existingUser = await fallbackUserStore.findUserByEmail(email);
                 if (existingUser) {
                     return res.status(400).json({ error: "User already exists" });
-                }
-
-                if (!hashedPassword) {
-                    hashedPassword = await hashPassword(password);
                 }
 
                 await fallbackUserStore.insertUser({

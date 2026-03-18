@@ -64,9 +64,14 @@ async function findUserByEmail(email) {
 async function insertUser(user) {
     return enqueueOperation(async () => {
         const store = await readStore();
-        const record = { ...user, id: store.nextId++ };
-        store.usersByEmail[user.email.toLowerCase()] = record;
-        await writeStore(store);
+        const nextId = store.nextId || 1;
+        const emailKey = user.email.toLowerCase();
+        const record = { ...user, id: nextId };
+        const updatedStore = {
+            nextId: nextId + 1,
+            usersByEmail: { ...store.usersByEmail, [emailKey]: record }
+        };
+        await writeStore(updatedStore);
         return record;
     });
 }
