@@ -51,7 +51,10 @@ function enqueueOperation(operation, label = "operation") {
     const next = writeQueue.then(() => operation());
     // Avoid keeping the queue in a rejected state while preserving the original resolution
     writeQueue = next.catch((error) => {
-        console.error(`Fallback user store ${label} failed:`, error);
+        console.error(
+            `Fallback user store ${label} failed. Check file permissions and disk space.`,
+            error
+        );
     });
     return next;
 }
