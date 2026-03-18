@@ -1,30 +1,35 @@
 const express = require("express");
 const cors = require("cors");
+const path = require("path");
 require("dotenv").config();
 
 const app = express();
 
-// Middleware
 app.use(cors({
-    origin: ["http://localhost:3000", "http://127.0.0.1:3000", "http://127.0.0.1:5500"],
-    methods: ["GET", "POST", "PUT", "DELETE"],
-    allowedHeaders: ["Content-Type", "Authorization"],
-    credentials: true
+  origin: ["http://localhost:5001", "http://127.0.0.1:5001", "http://127.0.0.1:5500"],
+  methods: ["GET", "POST", "PUT", "DELETE"],
+  allowedHeaders: ["Content-Type", "Authorization"],
+  credentials: true
 }));
 
 app.use(express.json());
 app.options("*", cors());
 
-// Routes
-const authRoutes = require("./api/authRoutes");
-app.use("/auth", authRoutes);
+// Serve frontend static files
+app.use(express.static(path.join(__dirname, "frontend")));
 
-// Health check
+// API Routes
+const authRoutes = require("./api/authRoutes");
+const scanRoutes = require("./api/scanRoutes");
+app.use("/auth", authRoutes);
+app.use("/scans", scanRoutes);
+
+// Landing page
 app.get("/", (req, res) => {
-    res.json({ message: "BugScan Backend is running!" });
+  res.sendFile(path.join(__dirname, "frontend", "pages", "index.html"));
 });
 
 const PORT = process.env.PORT || 5001;
 app.listen(PORT, () => {
-    console.log(`✅ Server running on http://localhost:${PORT}`);
+  console.log(`Server running on http://localhost:${PORT}`);
 });

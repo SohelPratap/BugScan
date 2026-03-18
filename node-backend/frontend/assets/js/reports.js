@@ -1,27 +1,49 @@
 document.addEventListener("DOMContentLoaded", function () {
-    fetchReports();
+  const token = localStorage.getItem("token");
+  if (!token) { window.location.href = "login.html"; return; }
+  fetchReports(token);
 });
 
-function fetchReports() {
-    fetch("http://127.0.0.1:8000/reports")  // Replace with actual API endpoint
-        .then(response => response.json())
-        .then(data => displayReports(data))
-        .catch(error => console.error("Error fetching reports:", error));
+async function fetchReports(token) {
+  try {
+    const response = await fetch("http://localhost:5001/scans/reports", {
+      headers: { "Authorization": `Bearer ${token}` }
+    });
+
+    if (!response.ok) throw new Error("Failed to fetch reports");
+
+    const scans = await response.json();
+    displayReports(scans);
+  } catch (error) {
+    console.error("Error fetching reports:", error);
+    document.getElementById("report-table-body").innerHTML =
+      `<tr><td colspan="6">Failed to load reports.</td></tr>`;
+  }
 }
 
-function displayReports(reports) {
-    const tableBody = document.getElementById("report-table-body");
-    tableBody.innerHTML = ""; // Clear existing data
+function displayReports(scans) {
+  const tableBody = document.getElementById("report-table-body");
+  tableBody.innerHTML = "";
 
-    reports.forEach(report => {
-        const row = document.createElement("tr");
+  if (!scans.length) {
+    tableBody.innerHTML = `<tr><td colspan="6">No scans yet. Run your first scan!</td></tr>`;
+    return;
+  }
 
-        ["P0", "P1", "P2", "P3", "P4"].forEach(severity => {
-            const cell = document.createElement("td");
-            cell.textContent = report[severity] ? report[severity] : "N/A";
-            row.appendChild(cell);
-        });
+  scans.forEach(scan => {
+    const vulns = scan.vulnerabilities || [];
+    const counts = { P0: 0, P1: 0, P2: 0, P3: 0, P4: 0 };
+    vulns.forEach(v => { if (counts[v.severity] !== undefined) counts[v.severity]++; });
 
-        tableBody.appendChild(row);
-    });
+    const row = document.createElement("tr");
+    row.innerHTML = `
+      <td>${scan.target_url || "N/A"}</td>
+      <td>${new Date(scan.created_at).toLocaleDateString()}</td>
+      <td>${counts.P0}</td>
+      <td>${counts.P1}</td>
+      <td>${counts.P2}</td>
+      <td>${counts.P3 + counts.P4}</td>
+    `;
+    tableBody.appendChild(row);
+  });
 }
