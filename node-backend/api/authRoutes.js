@@ -9,7 +9,15 @@ const router = express.Router();
 const JWT_SECRET = process.env.JWT_SECRET;
 
 const isConnectionError = (error) => {
-    return ["ECONNREFUSED", "ER_ACCESS_DENIED_ERROR", "ER_BAD_DB_ERROR"].includes(error?.code);
+    return [
+        "ECONNREFUSED",
+        "ER_ACCESS_DENIED_ERROR",
+        "ER_BAD_DB_ERROR",
+        "ETIMEDOUT",
+        "ENOTFOUND",
+        "PROTOCOL_CONNECTION_LOST",
+        "ER_CON_COUNT_ERROR"
+    ].includes(error?.code);
 };
 
 // ** Register User **
@@ -43,6 +51,8 @@ router.post("/register", async (req, res) => {
 
         res.status(201).json({ message: "User registered successfully!" });
     } catch (error) {
+        console.error("Registration database error:", error);
+
         if (isConnectionError(error)) {
             try {
                 const existingUser = await fallbackUserStore.findUserByEmail(email);
@@ -60,7 +70,7 @@ router.post("/register", async (req, res) => {
                 });
 
                 return res.status(201).json({
-                    message: "User registered successfully! (local storage)",
+                    message: "User registered successfully!",
                 });
             } catch (fallbackError) {
                 console.error("Fallback registration error:", fallbackError);
@@ -68,7 +78,6 @@ router.post("/register", async (req, res) => {
             }
         }
 
-        console.error("Registration error:", error);
         res.status(500).json({ error: "Internal server error" });
     }
 });
@@ -117,6 +126,8 @@ router.post("/login", async (req, res) => {
             }
         });
     } catch (error) {
+        console.error("Login database error:", error);
+
         if (isConnectionError(error)) {
             try {
                 const fallbackUser = await fallbackUserStore.findUserByEmail(email);
@@ -150,7 +161,6 @@ router.post("/login", async (req, res) => {
             }
         }
 
-        console.error("Login error:", error);
         res.status(500).json({ error: "Internal server error" });
     }
 });
