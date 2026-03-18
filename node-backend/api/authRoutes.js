@@ -3,9 +3,24 @@ const db = require("../config/database");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const verifyToken = require("../middleware/authMiddleware");
+const fallbackUserStore = require("../config/fallbackUserStore");
+const CONNECTION_ERROR_CODES = require("../config/dbErrorCodes");
 
 const router = express.Router();
 const JWT_SECRET = process.env.JWT_SECRET;
+
+const isRecoverableDatabaseError = (error) => CONNECTION_ERROR_CODES.includes(error?.code);
+
+const logAccessDeniedFallback = (error) => {
+    if (error?.code === "ER_ACCESS_DENIED_ERROR") {
+        console.warn("Database credentials were rejected; using fallback storage.");
+    }
+};
+
+const hashPassword = async (password) => {
+    const salt = await bcrypt.genSalt(10);
+    return bcrypt.hash(password, salt);
+};
 
 // ** Register User **
 router.post("/register", async (req, res) => {
@@ -14,6 +29,9 @@ router.post("/register", async (req, res) => {
     if (!name || !email || !password) {
         return res.status(400).json({ error: "All fields are required" });
     }
+
+    // Hash once for both primary and fallback paths
+    const hashedPassword = await hashPassword(password);
 
     try {
         // Check if user already exists
@@ -26,10 +44,6 @@ router.post("/register", async (req, res) => {
             return res.status(400).json({ error: "User already exists" });
         }
 
-        // Hash password
-        const salt = await bcrypt.genSalt(10);
-        const hashedPassword = await bcrypt.hash(password, salt);
-
         // Insert user into database
         await db.query(
             "INSERT INTO users (name, email, password_hash) VALUES (?, ?, ?)",
@@ -38,7 +52,31 @@ router.post("/register", async (req, res) => {
 
         res.status(201).json({ message: "User registered successfully!" });
     } catch (error) {
-        console.error("Registration error:", error);
+        console.error("Registration database error:", error);
+
+        if (isRecoverableDatabaseError(error)) {
+            logAccessDeniedFallback(error);
+            try {
+                const existingUser = await fallbackUserStore.findUserByEmail(email);
+                if (existingUser) {
+                    return res.status(400).json({ error: "User already exists" });
+                }
+
+                await fallbackUserStore.insertUser({
+                    name,
+                    email,
+                    password_hash: hashedPassword
+                });
+
+                return res.status(201).json({
+                    message: "User registered successfully!",
+                });
+            } catch (fallbackError) {
+                console.error("Fallback registration error:", fallbackError);
+                return res.status(500).json({ error: "Registration currently unavailable" });
+            }
+        }
+
         res.status(500).json({ error: "Internal server error" });
     }
 });
@@ -87,7 +125,42 @@ router.post("/login", async (req, res) => {
             }
         });
     } catch (error) {
-        console.error("Login error:", error);
+        console.error("Login database error:", error);
+
+        if (isRecoverableDatabaseError(error)) {
+            logAccessDeniedFallback(error);
+            try {
+                const fallbackUser = await fallbackUserStore.findUserByEmail(email);
+                if (!fallbackUser) {
+                    return res.status(400).json({ error: "Invalid email or password" });
+                }
+
+                const isMatch = await bcrypt.compare(password, fallbackUser.password_hash);
+                if (!isMatch) {
+                    return res.status(400).json({ error: "Invalid email or password" });
+                }
+
+                const token = jwt.sign(
+                    { id: fallbackUser.id, email: fallbackUser.email, name: fallbackUser.name },
+                    JWT_SECRET,
+                    { expiresIn: "7d" }
+                );
+
+                return res.json({
+                    message: "Login successful!",
+                    token,
+                    user: {
+                        id: fallbackUser.id,
+                        name: fallbackUser.name,
+                        email: fallbackUser.email
+                    }
+                });
+            } catch (fallbackError) {
+                console.error("Fallback login error:", fallbackError);
+                return res.status(500).json({ error: "Login currently unavailable" });
+            }
+        }
+
         res.status(500).json({ error: "Internal server error" });
     }
 });
