@@ -4,9 +4,9 @@ const verifyToken = require("../middleware/authMiddleware");
 
 const router = express.Router();
 
-// Route to save scan data in Supabase
-router.post("/save", verifyToken, async (req, res) => {
-    const { scanData, email } = req.body;
+// Route to save scan data in Supabase (no authentication required)
+router.post("/save", async (req, res) => {
+    const { scanData } = req.body;
     const userEmail = req.user.email;
 
     if (!scanData || !scanData.ai_classification) {

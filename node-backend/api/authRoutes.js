@@ -1,9 +1,11 @@
 const express = require("express");
-const supabase = require("../config/supabaseClient");
+const db = require("../config/database");
 const bcrypt = require("bcryptjs");
-// Removed uuidv4 as Supabase auto-generates id
+const jwt = require("jsonwebtoken");
+const verifyToken = require("../middleware/authMiddleware");
 
 const router = express.Router();
+const JWT_SECRET = process.env.JWT_SECRET;
 
 // ** Register User **
 router.post("/register", async (req, res) => {
@@ -14,28 +16,32 @@ router.post("/register", async (req, res) => {
     }
 
     try {
-        // Hash the password
+        // Check if user already exists
+        const [existingUser] = await db.query(
+            "SELECT id FROM users WHERE email = ?",
+            [email]
+        );
+
+        if (existingUser.length > 0) {
+            return res.status(400).json({ error: "User already exists" });
+        }
+
+        // Hash password
         const salt = await bcrypt.genSalt(10);
         const hashedPassword = await bcrypt.hash(password, salt);
 
-        // Insert user into Supabase
-        const { data, error } = await supabase
-            .from("users")
-            .insert([{ name, email, password_hash: hashedPassword }]);
+        // Insert user into database
+        await db.query(
+            "INSERT INTO users (name, email, password_hash) VALUES (?, ?, ?)",
+            [name, email, hashedPassword]
+        );
 
-        if (error) throw error;
-
-        res.json({ message: "User registered successfully!" });
+        res.status(201).json({ message: "User registered successfully!" });
     } catch (error) {
+        console.error("Registration error:", error);
         res.status(500).json({ error: error.message });
     }
 });
-
-
-const jwt = require("jsonwebtoken");
-
-const JWT_SECRET = process.env.JWT_SECRET || "your-secret-key"; // Store in .env
-const verifyToken = require("../middleware/authMiddleware");
 
 // ** User Login **
 router.post("/login", async (req, res) => {
@@ -46,41 +52,60 @@ router.post("/login", async (req, res) => {
     }
 
     try {
-        // Fetch user from Supabase (replace `uuid` with `id`)
-        const { data: user, error } = await supabase
-            .from("users")
-            .select("id, name, email, password_hash")
-            .eq("email", email)
-            .single();
+        // Fetch user from database
+        const [users] = await db.query(
+            "SELECT id, name, email, password_hash FROM users WHERE email = ?",
+            [email]
+        );
 
-        if (error || !user) {
+        if (users.length === 0) {
             return res.status(400).json({ error: "Invalid email or password" });
         }
 
-        // Compare hashed password
+        const user = users[0];
+
+        // Compare password
         const isMatch = await bcrypt.compare(password, user.password_hash);
         if (!isMatch) {
             return res.status(400).json({ error: "Invalid email or password" });
         }
 
-        // Generate JWT token (replace `uuid` with `id`)
-        const token = jwt.sign({ id: user.id, email: user.email }, JWT_SECRET, { expiresIn: "7d" });
+        // Generate JWT token
+        const token = jwt.sign(
+            { id: user.id, email: user.email, name: user.name },
+            JWT_SECRET,
+            { expiresIn: "7d" }
+        );
 
-        res.json({ message: "Login successful!", token, user: { id: user.id, name: user.name, email: user.email } });
+        res.json({
+            message: "Login successful!",
+            token,
+            user: {
+                id: user.id,
+                name: user.name,
+                email: user.email
+            }
+        });
     } catch (error) {
+        console.error("Login error:", error);
         res.status(500).json({ error: error.message });
     }
 });
 
+// ** Verify Token **
 router.get("/verify", verifyToken, (req, res) => {
-    const token = req.headers["authorization"]?.split(" ")[1];
-    console.log("🔍 Received Token in /auth/verify:", token);
-
     if (!req.user) {
-        console.error("❌ No user found in request.");
         return res.status(401).json({ error: "User not authenticated" });
     }
-    res.json({ message: "Token is valid", user: req.user });
+    res.json({
+        message: "Token is valid",
+        user: req.user
+    });
+});
+
+// ** User Logout **
+router.post("/logout", (req, res) => {
+    res.json({ message: "Logout successful!" });
 });
 
 module.exports = router;

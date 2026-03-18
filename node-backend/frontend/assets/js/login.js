@@ -1,31 +1,6 @@
-document.addEventListener("DOMContentLoaded", async function () {
-    const token = localStorage.getItem("token");
-    const loggedIn = localStorage.getItem("loggedIn");
-    
-    console.log("🔍 Checking if user is already authenticated...");
-    console.log("loggedIn:", loggedIn);
-    console.log("Stored Token:", token);
-    
-    if (loggedIn === "true" && token) {
-        try {
-            const response = await fetch("http://localhost:5001/auth/verify", {
-                method: "GET",
-                headers: { "Authorization": `Bearer ${token}` }
-            });
-            
-            const data = await response.json();
-            console.log("🔹 Auth Check Response:", data);
-            
-            if (response.ok) {
-                console.log("✅ User authentication confirmed. Redirecting to dashboard...");
-                window.location.href = "dashboard.html";
-                return;
-            }
-        } catch (error) {
-            console.error("❌ Auth check failed:", error);
-        }
-    }
+document.addEventListener("DOMContentLoaded", function () {
     const form = document.getElementById("loginForm");
+    const loading = document.getElementById("loading");
 
     if (form) {
         form.addEventListener("submit", async function (e) {
@@ -39,58 +14,32 @@ document.addEventListener("DOMContentLoaded", async function () {
                 return;
             }
 
-            const backendUrl = "http://localhost:5001"; // Ensure this matches your backend URL
+            loading.style.display = "flex";
+            form.style.display = "none";
 
             try {
-                const response = await fetch(`${backendUrl}/auth/login`, {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json"
-                    },
-                    body: JSON.stringify({ email, password })
-                });
+                const data = await API.login(email, password);
 
-                const data = await response.json();
-                console.log("🔹 API Response:", data); // Log API response for debugging
-
-                if (response.ok && data.token) {
-                    console.log("✅ Login successful! Token received:", data.token);
-                    
-                    // Save token, user info, and set loggedIn flag
+                if (data.token) {
+                    // Save to localStorage
                     localStorage.setItem("token", data.token);
-                    localStorage.setItem("userName", data.user?.name || "Unknown");
-                    localStorage.setItem("userEmail", data.user?.email || "Unknown");
-                    localStorage.setItem("loggedIn", "true"); // Force set loggedIn
-                    
-                    console.log("✅ Stored in localStorage:");
-                    console.log("loggedIn:", localStorage.getItem("loggedIn"));
-                    console.log("token:", localStorage.getItem("token"));
+                    localStorage.setItem("userName", data.user.name);
+                    localStorage.setItem("userEmail", data.user.email);
+                    localStorage.setItem("userId", data.user.id);
 
-                    alert("Login successful!");
-                    setTimeout(() => {
-                        window.location.href = "dashboard.html"; // Wait a moment before redirecting
-                    }, 500);
+                    alert("✅ Login successful!");
+                    window.location.href = "dashboard.html";
                 } else {
-                    console.error("❌ Login error:", data.error || "No token received");
-                    alert("Error: " + (data.error || "Login failed."));
+                    alert("❌ Error: " + (data.error || "Login failed."));
+                    loading.style.display = "none";
+                    form.style.display = "block";
                 }
             } catch (error) {
-                console.error("❌ Login failed:", error);
-                alert("Login failed. Please try again later.");
+                console.error("Login error:", error);
+                alert("❌ Login failed. Please try again later.");
+                loading.style.display = "none";
+                form.style.display = "block";
             }
         });
     }
 });
-
-    const token = localStorage.getItem("token");
-    const loggedIn = localStorage.getItem("loggedIn");
-    
-    console.log("🔍 Checking if user is already authenticated...");
-    console.log("loggedIn:", loggedIn);
-    console.log("Stored Token:", token);
-    
-    if (loggedIn === "true" && token) {
-        console.log("✅ User already authenticated. Redirecting to dashboard...");
-        window.location.href = "dashboard.html";
-        return;
-    }

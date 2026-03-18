@@ -1,0 +1,49 @@
+-- Create Database
+CREATE DATABASE IF NOT EXISTS bugscan;
+USE bugscan;
+
+-- Create Users Table
+CREATE TABLE IF NOT EXISTS users (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    email VARCHAR(255) UNIQUE NOT NULL,
+    password_hash VARCHAR(255) NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+
+-- Create Scans Table
+CREATE TABLE IF NOT EXISTS scans (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT NOT NULL,
+    scan_name VARCHAR(255) NOT NULL,
+    target_url VARCHAR(500),
+    scan_type VARCHAR(100),
+    status VARCHAR(50) DEFAULT 'pending',
+    severity_count INT DEFAULT 0,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+);
+
+-- Create Vulnerabilities Table
+CREATE TABLE IF NOT EXISTS vulnerabilities (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    scan_id INT NOT NULL,
+    title VARCHAR(255) NOT NULL,
+    severity VARCHAR(50),
+    description TEXT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (scan_id) REFERENCES scans(id) ON DELETE CASCADE
+);
+
+-- Create Reports Table
+CREATE TABLE IF NOT EXISTS reports (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT NOT NULL,
+    scan_id INT NOT NULL,
+    report_content LONGTEXT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+    FOREIGN KEY (scan_id) REFERENCES scans(id) ON DELETE CASCADE
+);
