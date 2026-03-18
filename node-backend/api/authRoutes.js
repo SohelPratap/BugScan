@@ -9,7 +9,7 @@ const CONNECTION_ERROR_CODES = require("../config/dbErrorCodes");
 const router = express.Router();
 const JWT_SECRET = process.env.JWT_SECRET;
 
-const isDatabaseConnectionError = (error) => CONNECTION_ERROR_CODES.includes(error?.code);
+const shouldUseFallbackStorage = (error) => CONNECTION_ERROR_CODES.includes(error?.code);
 
 const hashPassword = async (password) => {
     const salt = await bcrypt.genSalt(10);
@@ -48,7 +48,10 @@ router.post("/register", async (req, res) => {
     } catch (error) {
         console.error("Registration database error:", error);
 
-        if (isDatabaseConnectionError(error)) {
+        if (shouldUseFallbackStorage(error)) {
+            if (error?.code === "ER_ACCESS_DENIED_ERROR") {
+                console.warn("Database credentials were rejected; using fallback storage.");
+            }
             try {
                 const existingUser = await fallbackUserStore.findUserByEmail(email);
                 if (existingUser) {
@@ -120,7 +123,10 @@ router.post("/login", async (req, res) => {
     } catch (error) {
         console.error("Login database error:", error);
 
-        if (isDatabaseConnectionError(error)) {
+        if (shouldUseFallbackStorage(error)) {
+            if (error?.code === "ER_ACCESS_DENIED_ERROR") {
+                console.warn("Database credentials were rejected; using fallback storage.");
+            }
             try {
                 const fallbackUser = await fallbackUserStore.findUserByEmail(email);
                 if (!fallbackUser) {

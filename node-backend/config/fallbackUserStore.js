@@ -14,6 +14,7 @@ async function readStore() {
             parsed = JSON.parse(data);
         } catch (parseError) {
             console.warn("⚠️ Fallback user store JSON invalid, resetting file.", parseError);
+            await writeStore({ ...defaultStore });
             return { ...defaultStore };
         }
         if (!parsed || typeof parsed !== "object") {
@@ -46,11 +47,11 @@ async function writeStore(store) {
 }
 
 // Serialize operations to avoid race conditions
-function enqueueOperation(operation) {
+function enqueueOperation(operation, label = "operation") {
     const next = writeQueue.then(() => operation());
     // Avoid keeping the queue in a rejected state while preserving the original resolution
     writeQueue = next.catch((error) => {
-        console.error("Fallback user store operation failed:", error);
+        console.error(`Fallback user store ${label} failed:`, error);
     });
     return next;
 }
@@ -60,7 +61,7 @@ async function findUserByEmail(email) {
     return enqueueOperation(async () => {
         const store = await readStore();
         return store.usersByEmail[email.toLowerCase()] || null;
-    });
+    }, "read");
 }
 
 async function insertUser(user) {
@@ -75,7 +76,7 @@ async function insertUser(user) {
         };
         await writeStore(updatedStore);
         return record;
-    });
+    }, "write");
 }
 
 module.exports = {
