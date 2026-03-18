@@ -9,7 +9,7 @@ const CONNECTION_ERROR_CODES = require("../config/dbErrorCodes");
 const router = express.Router();
 const JWT_SECRET = process.env.JWT_SECRET;
 
-const isConnectionError = (error) => CONNECTION_ERROR_CODES.includes(error?.code);
+const isDatabaseConnectionError = (error) => CONNECTION_ERROR_CODES.includes(error?.code);
 
 const hashPassword = async (password) => {
     const salt = await bcrypt.genSalt(10);
@@ -49,7 +49,7 @@ router.post("/register", async (req, res) => {
     } catch (error) {
         console.error("Registration database error:", error);
 
-        if (isConnectionError(error)) {
+        if (isDatabaseConnectionError(error)) {
             try {
                 const existingUser = await fallbackUserStore.findUserByEmail(email);
                 if (existingUser) {
@@ -125,7 +125,7 @@ router.post("/login", async (req, res) => {
     } catch (error) {
         console.error("Login database error:", error);
 
-        if (isConnectionError(error)) {
+        if (isDatabaseConnectionError(error)) {
             try {
                 const fallbackUser = await fallbackUserStore.findUserByEmail(email);
                 if (!fallbackUser) {
