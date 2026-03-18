@@ -26,6 +26,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     localStorage.setItem("userName", data.user.name);
                     localStorage.setItem("userEmail", data.user.email);
                     localStorage.setItem("userId", data.user.id);
+                    localStorage.setItem("loggedIn", "true");
 
                     alert("✅ Login successful!");
                     window.location.href = "dashboard.html";

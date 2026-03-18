@@ -32,5 +32,6 @@ const API = {
         localStorage.removeItem("userName");
         localStorage.removeItem("userEmail");
         localStorage.removeItem("userId");
+        localStorage.removeItem("loggedIn");
     }
 };
