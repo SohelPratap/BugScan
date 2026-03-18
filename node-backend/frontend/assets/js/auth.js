@@ -13,7 +13,7 @@ document.addEventListener("DOMContentLoaded", async function () {
     }
 
     try {
-        const response = await fetch("http://localhost:5001/auth/verify", {
+        const response = await fetch(`${API_BASE_URL}/auth/verify`, {
             method: "GET",
             headers: { "Authorization": `Bearer ${token}` }
         });
@@ -26,6 +26,7 @@ document.addEventListener("DOMContentLoaded", async function () {
             localStorage.removeItem("token");
             localStorage.removeItem("userName");
             localStorage.removeItem("userEmail");
+            localStorage.removeItem("userId");
             localStorage.removeItem("loggedIn");
             window.location.href = "login.html";
             return;
@@ -44,6 +45,7 @@ function logout() {
     localStorage.removeItem("token"); // Remove token
     localStorage.removeItem("userName"); // Remove user name
     localStorage.removeItem("userEmail"); // Remove user email
+    localStorage.removeItem("userId"); // Remove user id
     localStorage.removeItem("loggedIn"); // Remove loggedIn flag
     window.location.href = "login.html"; // Redirect to login page
 }
