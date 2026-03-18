@@ -3,9 +3,10 @@ const db = require("../config/database");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const verifyToken = require("../middleware/authMiddleware");
+const fallback = require("../config/fallbackUserStore");
 
 const router = express.Router();
-const JWT_SECRET = process.env.JWT_SECRET;
+const JWT_SECRET = require("../config/jwtSecret");
 
 // ** Register User **
 router.post("/register", async (req, res) => {
@@ -14,6 +15,10 @@ router.post("/register", async (req, res) => {
     if (!name || !email || !password) {
         return res.status(400).json({ error: "All fields are required" });
     }
+
+    // Hash password
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(password, salt);
 
     try {
         // Check if user already exists
@@ -26,10 +31,6 @@ router.post("/register", async (req, res) => {
             return res.status(400).json({ error: "User already exists" });
         }
 
-        // Hash password
-        const salt = await bcrypt.genSalt(10);
-        const hashedPassword = await bcrypt.hash(password, salt);
-
         // Insert user into database
         await db.query(
             "INSERT INTO users (name, email, password_hash) VALUES (?, ?, ?)",
@@ -37,9 +38,18 @@ router.post("/register", async (req, res) => {
         );
 
         res.status(201).json({ message: "User registered successfully!" });
-    } catch (error) {
-        console.error("Registration error:", error);
-        res.status(500).json({ error: "Internal server error" });
+    } catch (dbError) {
+        console.warn("MySQL unavailable, using local store:", dbError.message);
+        try {
+            if (fallback.findByEmail(email)) {
+                return res.status(400).json({ error: "User already exists" });
+            }
+            fallback.create({ name, email, password_hash: hashedPassword });
+            res.status(201).json({ message: "User registered successfully!" });
+        } catch (error) {
+            console.error("Registration error:", error);
+            res.status(500).json({ error: "Internal server error" });
+        }
     }
 });
 
@@ -51,6 +61,8 @@ router.post("/login", async (req, res) => {
         return res.status(400).json({ error: "Email and password required" });
     }
 
+    let user = null;
+
     try {
         // Fetch user from database
         const [users] = await db.query(
@@ -61,35 +73,37 @@ router.post("/login", async (req, res) => {
         if (users.length === 0) {
             return res.status(400).json({ error: "Invalid email or password" });
         }
-
-        const user = users[0];
-
-        // Compare password
-        const isMatch = await bcrypt.compare(password, user.password_hash);
-        if (!isMatch) {
+        user = users[0];
+    } catch (dbError) {
+        console.warn("MySQL unavailable, using local store:", dbError.message);
+        user = fallback.findByEmail(email);
+        if (!user) {
             return res.status(400).json({ error: "Invalid email or password" });
         }
-
-        // Generate JWT token
-        const token = jwt.sign(
-            { id: user.id, email: user.email, name: user.name },
-            JWT_SECRET,
-            { expiresIn: "7d" }
-        );
-
-        res.json({
-            message: "Login successful!",
-            token,
-            user: {
-                id: user.id,
-                name: user.name,
-                email: user.email
-            }
-        });
-    } catch (error) {
-        console.error("Login error:", error);
-        res.status(500).json({ error: "Internal server error" });
     }
+
+    // Compare password
+    const isMatch = await bcrypt.compare(password, user.password_hash);
+    if (!isMatch) {
+        return res.status(400).json({ error: "Invalid email or password" });
+    }
+
+    // Generate JWT token
+    const token = jwt.sign(
+        { id: user.id, email: user.email, name: user.name },
+        JWT_SECRET,
+        { expiresIn: "7d" }
+    );
+
+    res.json({
+        message: "Login successful!",
+        token,
+        user: {
+            id: user.id,
+            name: user.name,
+            email: user.email
+        }
+    });
 });
 
 // ** Verify Token **

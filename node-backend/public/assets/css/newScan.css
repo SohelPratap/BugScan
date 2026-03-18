@@ -1,59 +1,96 @@
-body {
-    font-family: Arial, sans-serif;
-    margin: 0;
-    padding: 0;
-    text-align: center;
-    background-color: #f4f4f4;
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
+
+/* Scan wrapper sits inside .main-content */
+.scan-wrapper {
+    width: 90%;
+    max-width: 800px;
+    text-align: left;
 }
 
-input {
-    width: 100%;
-    padding: 10px;
-    margin-bottom: 15px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
+.scan-wrapper h1 {
+    font-size: 28px;
+    color: #1a1a2e;
+    margin-bottom: 24px;
 }
 
+/* URL input */
+.scan-input-group {
+    display: flex;
+    align-items: center;
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    padding: 12px 16px;
+    margin-bottom: 16px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.06);
+    transition: border-color 0.2s;
+}
+
+.scan-input-group:focus-within {
+    border-color: #1872e8;
+    box-shadow: 0 0 0 3px rgba(24, 114, 232, 0.15);
+}
+
+.scan-input-group i {
+    color: #1872e8;
+    margin-right: 12px;
+    font-size: 18px;
+}
+
+.scan-input-group input {
+    border: none;
+    outline: none;
+    flex: 1;
+    font-size: 16px;
+    font-family: 'Poppins', sans-serif;
+    background: transparent;
+}
+
+/* Scan buttons */
 .scan-buttons {
     display: flex;
-    justify-content: center;
-    gap: 10px;
+    gap: 12px;
+    margin-bottom: 30px;
+    flex-wrap: wrap;
 }
 
-.scan-buttons button {
-    padding: 10px 20px;
+.btn-light, .btn-deep {
+    padding: 12px 28px;
     border: none;
-    border-radius: 5px;
+    border-radius: 8px;
     cursor: pointer;
-    font-size: 16px;
+    font-size: 15px;
+    font-family: 'Poppins', sans-serif;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: transform 0.15s, box-shadow 0.15s;
 }
 
-.scan-buttons button:first-child {
-    background-color: #007bff;
+.btn-light {
+    background-color: #1872e8;
     color: white;
 }
 
-.scan-buttons button:last-child {
+.btn-light:hover {
+    background-color: #105bb5;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(24, 114, 232, 0.35);
+}
+
+.btn-deep {
     background-color: #28a745;
     color: white;
 }
 
-table {
-    width: 100%;
-    margin-top: 20px;
-    border-collapse: collapse;
+.btn-deep:hover {
+    background-color: #1e7e34;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(40, 167, 69, 0.35);
 }
 
-th, td {
-    padding: 10px;
-    border: 1px solid #ddd;
-}
-
-th {
-    background-color: #007bff;
-    color: white;
-}
-
+/* Loading overlay */
 #loadingOverlay {
     position: fixed;
     top: 0;
@@ -69,23 +106,165 @@ th {
 
 .loading-popup {
     background: white;
-    padding: 20px;
-    border-radius: 10px;
+    padding: 30px 40px;
+    border-radius: 14px;
     text-align: center;
-    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+    font-family: 'Poppins', sans-serif;
 }
 
 .spinner {
-    width: 40px;
-    height: 40px;
-    border: 5px solid rgba(0, 0, 0, 0.3);
-    border-top: 5px solid #3498db;
+    width: 48px;
+    height: 48px;
+    border: 5px solid rgba(0, 0, 0, 0.1);
+    border-top: 5px solid #1872e8;
     border-radius: 50%;
-    animation: spin 1s linear infinite;
-    margin: 10px auto;
+    animation: spin 0.85s linear infinite;
+    margin: 0 auto 16px;
 }
 
 @keyframes spin {
-    0% { transform: rotate(0deg); }
+    0%   { transform: rotate(0deg); }
     100% { transform: rotate(360deg); }
 }
+
+/* Scan results section */
+#scan-results {
+    margin-bottom: 30px;
+    background: #f8f9ff;
+    border: 1px solid #d0d9f0;
+    border-radius: 12px;
+    padding: 24px;
+}
+
+.results-title {
+    font-size: 20px;
+    color: #1a1a2e;
+    margin-bottom: 16px;
+}
+
+.results-summary {
+    margin-bottom: 20px;
+}
+
+.scan-target {
+    color: #555;
+    font-size: 14px;
+    margin-top: 8px;
+}
+
+.summary-badges {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.badge {
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 600;
+    color: white;
+}
+
+.sev-p0 { background-color: #c0392b; }
+.sev-p1 { background-color: #e67e22; }
+.sev-p2 { background-color: #f1c40f; color: #333; }
+.sev-p3 { background-color: #27ae60; }
+.sev-p4 { background-color: #95a5a6; }
+
+/* Vulnerability cards */
+.vuln-card {
+    background: white;
+    border-radius: 10px;
+    padding: 16px 20px;
+    margin-bottom: 14px;
+    border-left: 5px solid #ccc;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.06);
+}
+
+.vuln-card.sev-p0 { border-left-color: #c0392b; }
+.vuln-card.sev-p1 { border-left-color: #e67e22; }
+.vuln-card.sev-p2 { border-left-color: #f1c40f; }
+.vuln-card.sev-p3 { border-left-color: #27ae60; }
+.vuln-card.sev-p4 { border-left-color: #95a5a6; }
+
+.vuln-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 10px;
+}
+
+.vuln-severity { font-size: 12px; }
+
+.vuln-type {
+    font-weight: 600;
+    font-size: 15px;
+    color: #1a1a2e;
+}
+
+.vuln-location, .vuln-mitigation {
+    font-size: 13px;
+    color: #555;
+    margin: 6px 0 0;
+}
+
+.vuln-location i, .vuln-mitigation i {
+    margin-right: 6px;
+    color: #1872e8;
+}
+
+.no-vulns {
+    color: #27ae60;
+    font-weight: 600;
+    font-size: 16px;
+}
+
+/* Comparison table */
+.comparison-title {
+    font-size: 18px;
+    color: #1a1a2e;
+    margin-bottom: 12px;
+}
+
+.table-wrapper {
+    width: 100%;
+    overflow-x: auto;
+    margin-bottom: 30px;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+}
+
+th, td {
+    padding: 12px 16px;
+    text-align: left;
+    border: 1px solid #e0e0e0;
+}
+
+th {
+    background-color: #1872e8;
+    color: white;
+    font-weight: 600;
+}
+
+tr:nth-child(even) td {
+    background-color: #f8f9ff;
+}
+
+/* Responsive */
+@media (max-width: 600px) {
+    .scan-buttons {
+        flex-direction: column;
+    }
+
+    .btn-light, .btn-deep {
+        width: 100%;
+        justify-content: center;
+    }
+}
+

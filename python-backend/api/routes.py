@@ -19,6 +19,7 @@ os.makedirs(REPORTS_DIR, exist_ok=True)
 # Define request model
 class ScanRequest(BaseModel):
     url: str
+    scanType: str = "light"
 
 @router.post("/scan/start/")
 async def start_scan(request: ScanRequest):
