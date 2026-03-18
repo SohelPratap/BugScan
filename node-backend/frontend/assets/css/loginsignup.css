@@ -55,6 +55,29 @@ h2 {
     font-size: 14px;
 }
 
+.message-box {
+    display: none;
+    padding: 10px 14px;
+    border-radius: 8px;
+    font-size: 14px;
+    margin-bottom: 16px;
+    text-align: left;
+    font-weight: 500;
+    word-break: break-word;
+}
+
+.message-box.error {
+    background: #fff0f0;
+    color: #c0392b;
+    border: 1px solid #f5c6cb;
+}
+
+.message-box.success {
+    background: #f0fff4;
+    color: #1a7a3e;
+    border: 1px solid #b2dfdb;
+}
+
 .input-group {
     display: flex;
     align-items: center;
@@ -84,6 +107,19 @@ h2 {
     flex: 1;
     padding: 8px;
     font-size: 16px;
+}
+
+.toggle-password {
+    margin-left: 8px;
+    margin-right: 0;
+    cursor: pointer;
+    color: #999 !important;
+    transition: color 0.2s;
+    flex-shrink: 0;
+}
+
+.toggle-password:hover {
+    color: #1872e8 !important;
 }
 
 .btn-submit {
