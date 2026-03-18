@@ -1,5 +1,6 @@
 const fs = require("fs/promises");
 const path = require("path");
+const { randomUUID } = require("crypto");
 
 const STORE_PATH = path.join(__dirname, "../database/local-users.json");
 let writeQueue = Promise.resolve();
@@ -29,7 +30,7 @@ async function writeUsers(users) {
 }
 
 // Serialize operations to avoid race conditions
-function enqueueWrite(operation) {
+function enqueueOperation(operation) {
     const next = writeQueue.then(() => operation());
     // Avoid keeping the queue in a rejected state while preserving the original resolution
     writeQueue = next.catch(() => {});
@@ -37,7 +38,8 @@ function enqueueWrite(operation) {
 }
 
 async function findUserByEmail(email) {
-    return enqueueWrite(async () => {
+    // Reads are queued to make sure they see the latest committed write.
+    return enqueueOperation(async () => {
         const users = await readUsers();
         return users.find(
             (user) => user.email && user.email.toLowerCase() === email.toLowerCase()
@@ -46,10 +48,9 @@ async function findUserByEmail(email) {
 }
 
 async function insertUser(user) {
-    return enqueueWrite(async () => {
+    return enqueueOperation(async () => {
         const users = await readUsers();
-        const nextId = users.reduce((max, current) => Math.max(max, current.id || 0), 0) + 1;
-        const record = { ...user, id: nextId };
+        const record = { ...user, id: randomUUID() };
         users.push(record);
         await writeUsers(users);
         return record;

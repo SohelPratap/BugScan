@@ -4,21 +4,17 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const verifyToken = require("../middleware/authMiddleware");
 const fallbackUserStore = require("../config/fallbackUserStore");
+const CONNECTION_ERROR_CODES = require("../config/dbErrorCodes");
 
 const router = express.Router();
 const JWT_SECRET = process.env.JWT_SECRET;
 
-const CONNECTION_ERROR_CODES = [
-    "ECONNREFUSED",
-    "ER_ACCESS_DENIED_ERROR",
-    "ER_BAD_DB_ERROR",
-    "ETIMEDOUT",
-    "ENOTFOUND",
-    "PROTOCOL_CONNECTION_LOST",
-    "ER_CON_COUNT_ERROR"
-];
-
 const isConnectionError = (error) => CONNECTION_ERROR_CODES.includes(error?.code);
+
+const hashPassword = async (password) => {
+    const salt = await bcrypt.genSalt(10);
+    return bcrypt.hash(password, salt);
+};
 
 // ** Register User **
 router.post("/register", async (req, res) => {
@@ -40,8 +36,7 @@ router.post("/register", async (req, res) => {
         }
 
         // Hash password
-        const salt = await bcrypt.genSalt(10);
-        const hashedPassword = await bcrypt.hash(password, salt);
+        const hashedPassword = await hashPassword(password);
 
         // Insert user into database
         await db.query(
@@ -60,8 +55,7 @@ router.post("/register", async (req, res) => {
                     return res.status(400).json({ error: "User already exists" });
                 }
 
-                const salt = await bcrypt.genSalt(10);
-                const hashedPassword = await bcrypt.hash(password, salt);
+                const hashedPassword = await hashPassword(password);
 
                 await fallbackUserStore.insertUser({
                     name,
