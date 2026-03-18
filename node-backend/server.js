@@ -16,11 +16,11 @@ app.use(express.json());
 app.options("*", cors());
 
 // Serve frontend static files
-app.use(express.static(path.join(__dirname, "frontend")));
+app.use(express.static(path.join(__dirname, "public")));
 
 // API Routes
-const authRoutes = require("./api/authRoutes");
-const scanRoutes = require("./api/scanRoutes");
+const authRoutes = require("./src/routes/authRoutes");
+const scanRoutes = require("./src/routes/scanRoutes");
 app.use("/auth", authRoutes);
 app.use("/scans", scanRoutes);
 
